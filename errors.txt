@@ -1,0 +1,10 @@
+﻿I'm sorry, but errors were detected in your script. Please correct the
+errors listed below, and try again.
+
+
+File "game/script.rpy", line 18: invalid syntax. Perhaps you forgot a comma?
+    Character("[name]", image = 'None' color = '#ac1234')
+                                ^^^^^^^^^^^^
+
+Ren'Py Version: Ren'Py 8.5.3.26051504
+Tue May 19 16:08:36 2026

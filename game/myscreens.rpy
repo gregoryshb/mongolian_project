@@ -97,8 +97,28 @@ screen notebook:
 
 screen hallway:
 
-    layer 'overlay'
     add "hallway.png"
+
+screen our_room_non_int:
+
+    add "our_room.png"
+
+screen dubki_big:
+
+    add "dubkibig.png"
+
+screen shop_outside:
+
+    add "shop_outside.png"
+
+screen shop_inside:
+
+    add "shop_inside.png"
+
+screen shop_inside_bg:
+
+    add "shop_inside_bg.png"
+    add "shopping_list.png"
 
 
 

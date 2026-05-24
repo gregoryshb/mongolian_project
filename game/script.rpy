@@ -20,7 +20,11 @@ image neighbor_phone = 'neighbor_phone.png'
 image neighbor_smart = 'neighbor_smart.png'
 image neighbor_glasses = 'neighbor_glasses.png'
 
-define dmitriev = Character('Дмитриев', kind = bubble, image = 'dmitriev', color = '#abc342')
+define dmitriev = Character('ИИИ', kind = bubble, image = 'dmitriev', color = '#abc342')
+define dmitriev_secret = Character('???', kind = bubble, image = 'dmitriev', color = '#abc342')
+define dmitriev_full = Character('Иванов Иван Иванович', kind = bubble, image = 'dmitriev', color = '#abc342')
+define dmitriev_surname = Character('Иван Иванович', kind = bubble, image = 'dmitriev', color = '#abc342')
+define dmitriev_short = Character('ИИ', kind = bubble, image = 'dmitriev', color = '#abc342')
 
 image dmitriev_base = 'dmitriev_base.png'
 
@@ -348,7 +352,7 @@ label hallway:
     if not renpy.get_screen("notebook"):
         show screen notebook
     
-    show screen hallway
+    call screen hallway
 
     play music mystery loop
 
@@ -508,7 +512,7 @@ label hallway_2:
 
     hide kostya_happy
 
-    $ renpy.pause(2.0, hard=True)
+    $ renpy.pause(5.0, hard=True)
 
     show kostya_mystery
 
@@ -569,6 +573,277 @@ label hallway_3:
 
     show screen hallway
     show kostya_mystery
+
+    if kostya_approval >= 1:
+
+        name "На"
+
+    elif kostya_approval <= 1:
+
+        name "Вот и твое молоко!"
+
+    kostya "Ооо! Спасибо большое!"
+
+    kostya "Теперь я расскажу тебе о конспекте, слушай внимательно..."
+
+    kostya "На самом деле, у тебя сейчас очень большие шансы его заполучить"
+
+    kostya "Потому что находится он у твоего соседа"
+
+    kostya "Я не знаю, чей это конспект и как он попал к Игнату"
+
+    kostya "Но одно остаётся фактом - без него конспект ты не достанешь"
+
+    if kostya_approval >= 1:
+
+        name "(Ну вот, придется ещё что-то у этого чудика просить)"
+
+        name 'Спасибо...'
+
+        kostya 'Обращайся, если что!'
+    
+    elif kostya_approval <= 1:
+
+        name 'Ого, спасибо большое!'
+
+        kostya 'Обращайся, друг!'
+
+label evening_1:
+
+    show screen our_room_non_int
+
+    name "Ну и день..."
+
+    name "Интересно, что это всё-таки за конспект и как он оказался у Игната?"
+
+    name "Надо бы расспросить наших кураторов, может быть они что-то знают"
+
+    name "..."
+
+    name "Ну ладно, завтра мне на адаптационку, стоит хорошенько выспаться"
+
+    $ renpy.pause(10.0, hard=True)
+
+    scene blackbg
+    play sound night_skip fadein 1.0
+
+    "День второй."
+
+
+
+label morning_2:
+
+    show screen our_room_non_int
+    stop night_skip fadeout 1.0
+
+    name "Вот блин, я проспал адаптационку!"
+
+    name "Что ж, ничего не поделать, до Университета все равно полтора часа ехать..."
+
+    name "Видимо, останусь здесь"
+
+    name "???"
+
+    name "Что это за записка на столе?"
+
+    name ""Привет, это твой сосед, сегодня я приду очень поздно, поэтому не успею купить продукты"" 
+    
+    name ""Можешь, пожалуйста, сходить в Пятерочку?""
+
+    menu neighbor_asks:
+
+        "Да за кого он меня принимает???":
+
+            $ neighbor_approval -= 1
+
+            name "Только заселился, а уже как мальчик на побегушках!"
+
+            name "Ладно, ничего не поделаешь, не ругаться же с ним"
+
+            name "Когда не терпели..."
+
+        "Хм, а я даже не против":
+
+            $ neighbor_approval += 1
+
+            name "Думаю, это неплохой способ наладить отношения"
+
+            name "Все-таки Костя сказал, что Игнат - неплохой парень"
+
+    scene blackbg
+    jump shop_outside
+
+label shop_outside:
+
+    show screen shop_outside
+
+    name "Первый раз иду в эту Пятерочку"
+
+    name 'Надейся на худшее, готовься к лучшему.'
+
+    name 'Кажется, так говорят...'
+
+    name 'Зато какие крутые тачки тут стоят!'
+
+    name 'Ладно, не стоит терять времени'
+
+    jump shop_inside
+
+label shop_inside:
+
+    show screen shop_inside
+
+    name "Так-так-так"
+
+    name "Что там нужно было купить..."
+
+    show screen shop_inside_bg
+
+    name "..."
+
+    $ renpy.pause(3.0, hard=True)
+
+    name "....."
+
+    $ renpy.pause(3.0, hard=True)
+
+    name "Он..."
+
+    name "На монгольском..."
+
+    menu shopping:
+
+        "Ну приехали":
+
+            $ neighbor_approval -= 1
+
+            name "За что мне все это?.."
+
+        "Ничего страшного":
+
+            $ neighbor_approval += 1
+
+            name "Похоже, Игнат опять запутался"
+
+            name "Ну ладно, поищу информацию в блокноте"
+
+    name "Окей, нужно как-то соединить слова с продуктами"
+
+    #вставить игру найди пару
+
+    name "Фух, вроде со списком разобрался..."
+
+    name "Пора все это купить"
+
+label shop_line:
+
+    #show screen line_dmitriev
+
+    show dmitriev_base
+
+    dmitriev_secret "Молодой человек, у вас есть минутка?"
+
+    menu dmitriev_serious_question:
+
+        "Да":
+
+            name "(Все равно в очереди стоять)"
+
+            name "Да, есть"
+
+            dmitriev_secret "Чудесно!"
+
+        "Нет":
+
+            name "(Только этого не хватало)"
+
+            name "Извините, нет"
+
+            dmitriev_secret "Приму этот ответ за "да""
+
+    dmitriev_secret "Меня зовут Иванов Иван Иванович"
+
+    dmitriev_full "Меня зовут Иванов Иван Иванович"
+
+    dmitriev_surname "Меня зовут Иванов Иван Иванович"
+
+    dmitriev_short "Меня зовут Иванов Иван Иванович"
+
+    dmitriev "Меня зовут Иванов Иван Иванович"
+
+    dmitriev "Я вот хотел у Вас спросить, как у представителя ПОКОЛЕНИЯ Z..."
+
+    dmitriev "Вот ЧТО Вы знаете об истории ??"
+
+    dmitriev "На днях.. Я разговаривал со своими внуками"
+
+    dmitriev "И когда я их спросил про ХРИСТИАНИЗАЦИЮ РУСИ! И про стрельцов! Они НЕ ответили!!"
+
+    name "..."
+
+    dmitriev "ИИИ: А вот ДАВАЙТЕ я у ВАС СПРОШУ? Я вам ВОПРОС, А ВЫ МНЕ — ОТВЕТ!"
+
+    dmitriev "ВЫ СОГЛАСНЫ????"
+
+    menu:
+
+        "Да":
+
+            name "Что ж... Давайте"
+
+            dmitriev "Отлично!!!"
+
+            jump dmitriev_minigame
+
+        "Нет":
+
+            name "Наверное, откажусь"
+
+            dmitriev "Неправильный ответ!!!"
+
+            jump dmitriev_minigame
+
+label dmitriev_minigame:
+
+    #разобраться
+
+    dmitriev "Что ж, я ВАШУ ТОЧКУ ЗРЕНИЯ понял"
+
+    dmitriev "Но я вам, конечно, советую прийти на мою лекцию."
+
+    dmitriev "ПОРАССУЖДАЕМ над идеей Достоевского русского - ВСЕЧЕЛОВЕКА"
+
+    name "С-спасибо, но нет"
+
+    dmitriev "А вот и моя очередь"
+
+    dmitriev "Спасибо, молодой человек, за РАЗГОВОР. Я вынужден с вами попрощаться"
+
+    menu:
+
+        "Ну и к лучшему":
+
+            jump out_turn
+
+        "Это было даже интересно":
+
+            jump our_turn
+
+
+
+        
+
+    
+
+
+
+
+
+
+
+
+
+
 
 
 

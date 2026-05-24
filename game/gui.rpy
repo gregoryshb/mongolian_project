@@ -6,6 +6,11 @@
 ## другими файлами, из-за чего инициализация здесь запускается первее.
 init offset = -2
 
+transform _sprite_default:
+  align (2, 1)
+
+define config.default_transform = _sprite_default
+
 ## Вызываю gui.init, чтобы сбросить стили, чувствительные к стандартным
 ## значениям, и задать высоту и ширину окна игры.
 init python:
@@ -59,13 +64,13 @@ define gui.interface_text_color = '#404040'
 ## Шрифты и их размеры #########################################################
 
 ## Шрифт, используемый внутриигровым текстом.
-define gui.text_font = "Pangolin-Regular.ttf"
+define gui.text_font = 'Pangolin-Regular.ttf'
 
 ## Шрифт, используемый именами персонажей.
-define gui.name_text_font = "Pangolin-Regular.ttf"
+define gui.name_text_font = 'Pangolin-Regular.ttf'
 
 ## Шрифт, используемый текстом вне игры.
-define gui.interface_text_font = "Pangolin-Regular.ttf"
+define gui.interface_text_font = 'Pangolin-Regular.ttf'
 
 ## Размер нормального текста диалога.
 define gui.text_size = 33

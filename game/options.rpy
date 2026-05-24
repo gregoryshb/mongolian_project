@@ -12,7 +12,7 @@
 ##
 ## Символы "_()", окружающие название, отмечают его как пригодное для перевода.
 
-define config.name = _("")
+define config.name = _("PROJECT: MONGOLIA")
 
 
 ## Определяет, показывать ли заголовок, данный выше, на экране главного меню.
@@ -56,7 +56,7 @@ define config.has_voice = False
 ## Чтобы разрешить игроку тестировать громкость на звуковом или голосовом
 ## каналах, раскомментируйте строчку и настройте пример звука для прослушивания.
 
-# define config.sample_sound = "sample-sound.ogg"
+define config.sample_sound = "sample-sound.ogg"
 # define config.sample_voice = "sample-voice.ogg"
 
 
@@ -64,7 +64,7 @@ define config.has_voice = False
 ## проигрываться в главном меню. Этот файл продолжит проигрываться во время
 ## игры, если не будет остановлен, или не начнёт проигрываться другой аудиофайл.
 
-# define config.main_menu_music = "main-menu-theme.ogg"
+define config.main_menu_music = "main-menu-theme.ogg"
 
 
 ## Переходы ####################################################################

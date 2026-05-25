@@ -120,6 +120,102 @@ screen shop_inside_bg:
     add "shop_inside_bg.png"
     add "shopping_list.png"
 
+screen secret_ending:
+
+    text "ВЫ НАШЛИ СЕКРЕТНУЮ КОНЦОВКУ!":
+       
+        xalign 0.5
+        yalign 0.5
+        size 60
+        color "#ffffff"
+
+screen number_controls():
+
+    key "K_1" action Jump("lose")
+    key "K_2" action Jump("lose")
+    key "K_3" action Jump("lose")
+    key "K_4" action Jump("tupik")
+
+
+screen number_controls_tupik():
+
+    key "K_1" action Jump("yama")
+    key "K_2" action Jump("lose")
+    key "K_3" action Jump("lose")
+    key "K_4" action Jump("lose")
+
+
+
+screen number_controls_yama():
+
+    key "K_1" action Jump("lose")
+    key "K_2" action Jump("win")
+    key "K_3" action Jump("lose")
+    key "K_4" action Jump("lose")
+
+python:
+
+    from operator import itemgetter
+    from collections import defaultdict
+
+    class Crossword:
+        
+        def __init__ (self, rows, cols, empty = ' ', available_words = []):
+
+            self.rows = rows
+            self.cols = cols
+            self.empty = empty
+            self.available_words = available_words
+            self.let_coords = defaultdict(list)
+            self.original_words = available_words.copy()
+
+        def prep_grid_words(self):
+
+            self.current_wordlist = []
+            self.let_coords.clear()
+            self.grid = [[self.empty]*self.cols for i in range(self.rows)]
+            self.first_word(self.available_words[0][0])
+
+        def compute_crossword(self, time_permitted = 1.0):
+
+            self.best_wordlist = []
+            wordlist_length = len(self.available_words)
+            time_permitted = float(time_permitted)
+            start_full = float(time.time())
+
+            while (float(time.time()) - start_full) < time_permitted:
+
+                self.prep_grid_words()
+                for word in self.available_words():
+                    
+                    if word[0] not in [w[0] for w in self.current_wordlist]:
+                        
+                        self.add_words(word)
+
+                if len(self.current_wordlist) > len(self.best_wordlist):
+
+                    best_wordlist = list(self.current_wordlist)
+                    self.best_grid = [row[:] for row in self.grid]
+
+                if len(self.best_wordlist) == wordlist_length:
+                    break
+            
+            return self.best_grid, self.best_wordlist
+
+        def 
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

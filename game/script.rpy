@@ -1,15 +1,15 @@
 #Персонажи наши
 
-define kostya = Character('Костя', image = 'kostya', color="#c8ffc8")
-define kostya_mystery = Character('???', image = 'kostya', color = '#c8ffc8')
+define kostya = Character('Костя', image = 'kostya', color="#c8ffc8", slow_cps = 20)
+define kostya_mystery = Character('???', image = 'kostya', color = '#c8ffc8', slow_cps = 20)
 
 image kostya_base = 'kostya_base.png'
 image kostya_mystery = 'kostya_mystery.png'
 image kostya_happy = 'kostya_happy.png'
 image kostya_think = 'kostya_think.png'
 
-define neighbor = Character('Игнат', image = 'neighbor', color= '#235fe4')
-define neighbor_secret = Character('???', image = 'neighbor', color = '#235fe4')
+define neighbor = Character('Игнат', image = 'neighbor', color= '#235fe4', slow_cps = 20)
+define neighbor_secret = Character('???', image = 'neighbor', color = '#235fe4', slow_cps = 20)
 
 image neighbor_base = 'neighbor_base.png'
 image neighbor_smile = 'neighbor_smile.png'
@@ -20,33 +20,41 @@ image neighbor_phone = 'neighbor_phone.png'
 image neighbor_smart = 'neighbor_smart.png'
 image neighbor_glasses = 'neighbor_glasses.png'
 
-define dmitriev = Character('ИИИ', kind = bubble, image = 'dmitriev', color = '#abc342')
-define dmitriev_secret = Character('???', kind = bubble, image = 'dmitriev', color = '#abc342')
-define dmitriev_full = Character('Иванов Иван Иванович', kind = bubble, image = 'dmitriev', color = '#abc342')
-define dmitriev_surname = Character('Иван Иванович', kind = bubble, image = 'dmitriev', color = '#abc342')
-define dmitriev_short = Character('ИИ', kind = bubble, image = 'dmitriev', color = '#abc342')
+define dmitriev = Character('ИИИ', kind = bubble, image = 'dmitriev', color = '#abc342', slow_cps = 20)
+define dmitriev_secret = Character('???', kind = bubble, image = 'dmitriev', color = '#abc342', slow_cps = 20)
+define dmitriev_full = Character('Иванов Иван Иванович', kind = bubble, image = 'dmitriev', color = '#abc342', slow_cps = 20)
+define dmitriev_surname = Character('Иван Иванович', kind = bubble, image = 'dmitriev', color = '#abc342', slow_cps = 20)
+define dmitriev_short = Character('ИИ', kind = bubble, image = 'dmitriev', color = '#abc342', slow_cps = 20)
 
 image dmitriev_base = 'dmitriev_base.png'
 
-define rat_1 = Character("Крыса побольше", kind = bubble, image = 'bubble.png', color = '#706d65')
+define rat_1 = Character("Крыса побольше", kind = bubble, image = 'bubble.png', color = '#706d65', slow_cps = 20)
 
-define rat_2 = Character('Крыса поменьше', kind = bubble, image = 'bubble.png', color = '#706d65')
+define rat_2 = Character('Крыса поменьше', kind = bubble, image = 'bubble.png', color = '#706d65', slow_cps = 20)
 
-define player = Character("[name]", image = 'None', color = '#ac1234') 
+define player = Character("[name]", image = 'None', color = '#ac1234', slow_cps = 20) 
 
 ## Заранее извиняемся перед всеми женщинами!!!
 ## Нам пришлось сделать персонажа мужчиной, потому что он живет в мужском общежитии
 ## Кроме того, опыт главного героя основан на жизни члена нашей команды, который к сожалению, мужчина
 
-define dad = Character('Папа', image = 'dad')
+define dad = Character('Папа', image = 'dad', slow_cps = 20)
 
 image dad_base = 'dad_base.png'
 image dad_happy = 'dad_happy.png'
 
-define mom = Character('Мама', image = 'mom')
+define mom = Character('Мама', image = 'mom', slow_cps = 20)
 
 image mom_base = 'mom_base.png'
 image mom_happy = 'mom_happy.png'
+
+define galina = Character('Галина Олеговна', image = 'galina', color = '#eb23a6', slow_cps = 20)
+
+image galina = 'galina.png'
+
+define bus_stranger = Character('???', image = 'bus_stranger', color='#235fe4')
+
+image bus_stranger = "bus_stranger.png"
 
 default neighbor_approval = 0
 default kostya_approval = 0
@@ -56,6 +64,8 @@ default kostya_questioned = []
 default kostya_ignat = False
 default kostya_kostya = False
 default kostya_ivushki = False
+
+default is_dream = False
 
 #Начало игры:
 label start:
@@ -646,9 +656,9 @@ label morning_2:
 
     name "Что это за записка на столе?"
 
-    name ""Привет, это твой сосед, сегодня я приду очень поздно, поэтому не успею купить продукты"" 
+    name "“Привет, это твой сосед, сегодня я приду очень поздно, поэтому не успею купить продукты”" 
     
-    name ""Можешь, пожалуйста, сходить в Пятерочку?""
+    name "“Можешь, пожалуйста, сходить в Пятерочку?”"
 
     menu neighbor_asks:
 
@@ -759,7 +769,7 @@ label shop_line:
 
             name "Извините, нет"
 
-            dmitriev_secret "Приму этот ответ за "да""
+            dmitriev_secret "Приму этот ответ за “да”"
 
     dmitriev_secret "Меня зовут Иванов Иван Иванович"
 
@@ -771,19 +781,19 @@ label shop_line:
 
     dmitriev "Меня зовут Иванов Иван Иванович"
 
-    dmitriev "Я вот хотел у Вас спросить, как у представителя ПОКОЛЕНИЯ Z..."
+    dmitriev "Я вот хотел у Вас спросить, как у представителя {color=red}ПОКОЛЕНИЯ Z...{/color}"
 
-    dmitriev "Вот ЧТО Вы знаете об истории ??"
+    dmitriev "Вот {b}ЧТО{/b} Вы знаете об {i}истории{/i} ??"
 
-    dmitriev "На днях.. Я разговаривал со своими внуками"
+    dmitriev "На днях.. Я разговаривал со своими {color=red}внуками{/color}"
 
-    dmitriev "И когда я их спросил про ХРИСТИАНИЗАЦИЮ РУСИ! И про стрельцов! Они НЕ ответили!!"
+    dmitriev "И когда я их {b}спросил{/b} про ХРИСТИАНИЗАЦИЮ РУСИ! И про {i}{color=red}стрельцов!{/color}{/i} Они {color=red}НЕ ответили!!{/color}"
 
     name "..."
 
-    dmitriev "ИИИ: А вот ДАВАЙТЕ я у ВАС СПРОШУ? Я вам ВОПРОС, А ВЫ МНЕ — ОТВЕТ!"
+    dmitriev "ИИИ: А вот {color=red}ДАВАЙТЕ{/color} я у ВАС {b}СПРОШУ{/b}? Я вам {color=red}ВОПРОС, А ВЫ МНЕ — ОТВЕТ!{/color}"
 
-    dmitriev "ВЫ СОГЛАСНЫ????"
+    dmitriev "{color=red}{b}ВЫ СОГЛАСНЫ????{/b}{/color}"
 
     menu:
 
@@ -791,7 +801,7 @@ label shop_line:
 
             name "Что ж... Давайте"
 
-            dmitriev "Отлично!!!"
+            dmitriev "{color=red}Отлично!!!!!!{/color}"
 
             jump dmitriev_minigame
 
@@ -806,6 +816,80 @@ label shop_line:
 label dmitriev_minigame:
 
     #разобраться
+
+    dmitriev 'я что-то говорю потому что я плейсхолдер'
+
+
+label dmitriev_secret:
+
+    dmitriev "{color=red}Ого!!!!{/color} да вы прямо {b}МОЛОДЕЦ!{/b} {color=red}{i}Вдумчиво{/i} отвечаете на вопросы!!{/color}"
+
+    name "Спасибо!"
+
+    dmitriev "Теперь у меня больше {i}уверенности{/i} в {color=red}{b}Вашем поколении{/b}{/color}"
+
+    dmitriev "{color=red}Не ХОТИТЕ ли,{/color} кстати, {color=red}{i}прийти{/i}{/color} ко мне на {b}ОТКРЫТУЮ ЛЕКЦИЮ В БИБЛИОТЕКЕ ИМЕНИ НЕКРАСОВА{/b}"
+
+    dmitriev "Она на тему {b}{i}первородного греха и влияния христианство на Русь.{/b}{/i}"
+
+    menu final_choice:
+
+        "Да!":
+
+            jump hooray:
+
+        "Нет...":
+
+            dmitriev 'Очень {color=red}жаль!{/color}'
+
+            jump dmitriev_win
+
+label hooray:
+    
+    name "Хочу! А когда она будет происходить?"
+
+    dmitriev "Она в эту {color=red}пятницу, {i}в 16:30{/i}{/color}"
+
+    dmitriev "А на каком, {b}ЯЗЫКЕ{/b} {color=red}Вы {i}говорили{/i}{/color} только что?"
+
+    name "На монгольском.. я недавно начал его учить"
+
+    dmitriev '{color=red}О, это правильно!!!!{/color} Хотел бы я {i}вести свои лекции{/i} и там, в МОНГОЛИИ...'
+
+    jump mongolia
+
+label mongolia:
+
+    scene blackbg
+    play music mongol_song fadein 5.0 
+
+    "Пять лет спустя"
+
+    name "Вот так я и стал паломником в Монголии"
+
+    name "Я путешествую со своим наставником, Ивановым Иваном Ивановичем"
+
+    name "Вместе мы обучаем людей христианским ценностям и традициям."
+
+    name "Я не жалею о том, что ушел из Университета, ведь я нашел свой смысл в таком образе жизни"
+
+    name "Правда немного жаль, что мы так и не подружились с Игнатом..."
+
+    name "Но это сейчас не важно, мне нужно идти, дело праведное не ждёт."
+
+    $ renpy.pause(20.0, hard = True)
+
+    window hide
+
+    pause 20.0
+
+    call screen secret_ending
+
+    $ renpy.pause(5.0, hard = True)
+
+    jump main_menu
+
+label dmitriev_win:
 
     dmitriev "Что ж, я ВАШУ ТОЧКУ ЗРЕНИЯ понял"
 
@@ -823,12 +907,349 @@ label dmitriev_minigame:
 
         "Ну и к лучшему":
 
-            jump out_turn
+            jump our_turn
 
         "Это было даже интересно":
 
             jump our_turn
 
+label our_turn:
+
+    #show galya_background
+    #show galina
+
+    name "???"
+
+    name "Пока я отходил от того, что произошло, подошла моя очередь"
+
+    galina "Проходите!"
+
+    scene blackbg fadein 1.5
+
+    $ renpy.pause(5.0, hard=True)
+
+    jump neighbor_notes
+
+label neighbor_notes:
+
+    scene our_room_non_int fadein 1.5
+
+    name "(Последние два дня я никак не мог поговорить с Игнатом по поводу конспекта...)"
+
+    name '(Сегодня я просто обязан это сделать!)'
+
+    name 'Игнат, можно я кое о чем тебя спрошу?'
+
+    show neighbor_surprise
+
+    neighbor "Ну да, коенечно. Что такое?"
+
+    name '(Блин, как бы аккуратно об этом сказать?..)'
+
+    name 'Слушай... Мне тут...'
+
+    name 'Мне тут Костя сказал, что у тебя есть... эммм...'
+
+    name "Конспект. Конспект по дискретной математике"
+
+    hide neighbor_surprise
+    show neighbor_base
+
+    neighbor "Так"
+
+    name "Так вот..."
+    
+    name "Можно ли его у тебя позаимствовать? На время"
+
+    name 'Я все-таки первокурсник, а тебе, наверное, он все равно сейчас не нужен'
+
+    hide neighbor_base
+    show neighbor_glasses
+
+    neighbor "Хммм..."
+
+    neighbor 'Ну, этот конспект для меня очень важен. Я не хочу его отдавать кому попало'
+
+    neighbor '...'
+
+    hide neighbor_glasses
+    show neighbor_smart
+
+    neighbor 'Идея!'
+
+    neighbor 'Ты ведь не забыл, что я постоянно переключаюсь с монгольского на русский и обратно?'
+
+    neighbor 'Я стараюсь больше говорить с тобой по-русски, но хотел бы увидеть подобный шаг и с твоей стороны'
+
+    hide neighbor_smart
+    show neighbor_smile
+
+    neighbor 'Попробуй подучить монгольский, чтобы меня понимать в случае чего'
+
+    neighbor "Через пару дней я проверю, насколько добросовестно ты подходишь к обучению"
+
+    hide neighbor_smile
+    show neighbor_glasses
+
+    neighbor 'Если сможешь пройти мой тест, то получишь блокнот'
+
+    neighbor 'Договорились?'
+
+    menu notes_attitude:
+
+        "Звучит"
+
+        "Неплохо":
+
+            name "(Как будто для меня в этом только плюсы)"
+
+            name '(Изучу новый язык, начну понимать Игната, еще и конспект заполучу)'
+
+            name 'Да, с радостью!'
+
+            hide neighbor_glasses
+            show neighbor_joy
+
+            neighbor 'Супер!' 
+
+        "Ужасно":
+
+            name '(О боже...)'
+
+            name '(Неужели мне настолько сильно нужен конспект?)'
+
+            if kostya_approval >= 1:
+
+                name '(Ладно, поверю Косте, что это стоит того)'
+
+            name 'Ладно уж, давай'
+
+            hide neighbor_glasses
+            show neighbor_smile
+            
+            neighbor 'Отлично, готовься'
+
+    name '(Отлично, теперь пора в Университет)'
+
+    name '(Надо успеть на ивовозку)'
+
+    name '...'
+
+    name 'Кто вообще придумал это тупое слово..?'
+
+    jump ivovozka
+
+label ivovozka:
+
+    name "Отлично, а теперь в университет"
+
+    name "По коням! Точнее по ивовозкам!"
+
+    name "..Или как там называют автобус из Ивушек.."
+
+    scene bus
+
+    name "Пока еду в университет, попробую узнать какие-то новые слова на монгольском"
+
+    name "Так..."
+
+    name "направо – “баруун тийш”"
+
+    name "налево – “зүүнш”"
+    
+    name "назад – “буцаан”"
+    
+    name "вперед – “урагш”"
+    
+    name "Теперь нужно только заучить"
+ 
+    show bus_stranger
+
+    bus_stranger "Водителю плохо!"
+    
+    bus_stranger "Кто-нибудь, возьмите управление на себя, я врач, я приведу его в чувство"
+    
+    bus_stranger "Эй, ты, парень! Водить умеешь?"
+    
+    name "Да."
+    
+    bus_stranger "Ну вот и иди к рулю!! Быстро!!!"
+
+    scene rul
+    
+label ivovozka_game:
+
+    show screen number_controls
+
+    scene directions
+
+    menu:
+        "куда едем?"
+
+        "1. баруун тийш":
+            jump lose
+
+        "2. зүүнш":
+            jump lose
+
+        "3. буцаан":
+            jump lose
+
+        "4. урагш":
+            jump tupik
+
+label tupik:
+
+    show screen number_controls_tupik
+
+    scene tupik
+
+    menu:
+        "куда едем?"
+
+        "1. буцаан":
+            jump yama
+
+        "2. урагш":
+            jump lose
+
+        "3. баруун тийш":
+            jump lose
+
+        "4. зүүнш":
+            jump lose
+
+label yama:
+
+    show screen number_controls_yama
+
+    scene yama
+
+    menu:
+        "куда едем?"
+
+        "1. зүүнш":
+            jump lose
+
+        "2. баруун тийш":
+            jump win
+
+        "3. урагш":
+            jump lose
+
+        "4. буцаан":
+            jump lose
+
+label win:
+    hide screen number_controls
+    hide screen number_controls_tupik
+    hide screen number_controls_yama
+
+    scene resultpie
+
+    "ура молодец возьми из бардачка пирожок."
+
+    jump ivovozka_end
+
+label lose:
+    hide screen number_controls
+    hide screen number_controls_tupik
+    hide screen number_controls_yama
+
+    scene resultdeath
+
+    "але куда неправильно! все умерли."
+
+    pause 1.5
+
+    jump ivovozka_game
+
+
+label ivovozka_end:
+
+    scene bus
+
+    name "Фух, доехали"
+    
+    name "Врач, как там водитель?"
+    
+    show bus_stranger
+    
+    bus_stranger "Нормально. Точнее не очень, но жить будет."
+    
+    name "Ну ладно, мне пора в вуз, вы уж дальше сами!"
+
+    jump kitchen_sequence
+
+label kitchen_sequence:
+
+    scene our_room_non_int
+
+    name "В тот день я так устал. что по приезде сразу лег спать"
+
+    name "А на следующий день я все утро рассказывал родителям о том, что произошло и повторял монгольские слова"
+
+    name "Только вот со мной произошло кое-что странное..."
+
+    scene kitchen_flashback
+
+    if neighbor_approval <= -3:
+        
+        name "Твари."
+
+    else:
+
+        name "Вот блин"
+
+    name "Опять развели бардак на столе"
+
+    name "Неужели так сложно за собой убрать?"
+
+    name "Эх, ну приятного аппетита мне"
+
+    play sound loud_screech
+    scene kitchen_open_door
+
+    name "???"
+
+    name "Это что... МЫШИ???"
+
+    name "Я точно не сплю???"
+
+    play sound relief
+    $ renpy.pause(3.0, hard=True)
+
+    "Вы ущипнули себя, но ничего не произошло"
+
+    menu is_it_dream:
+
+        "Это не сон...":
+            
+            $ is_dream = False
+
+        "Ущипнуть себя еще раз":
+
+            $ is_dream = True
+
+
+
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
 
 
         

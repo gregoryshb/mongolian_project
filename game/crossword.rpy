@@ -218,7 +218,7 @@ python:
         def input_letter(self, let):
 
             if self.set_letter(self.selected_row, self.selected_col, let):
-                if self.direction = 0:
+                if self.direction == 0:
                     self.moves(0, 1)
                 else:
                     self.moves(1, 0)
@@ -291,10 +291,10 @@ python:
             length = len(text)
 
             if w_vert:
-                return col = w_col and w_row <= row <= w_row + length
+                return col == w_col and w_row <= row <= w_row + length
             
             else:
-                return row = w_row and w_col <= col <= w_row + length
+                return row == w_row and w_col <= col <= w_row + length
 
 
             

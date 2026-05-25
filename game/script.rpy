@@ -102,6 +102,8 @@ label beginning:
     
     name "И вот сюда мне довелось попасть в первый год учебы…"
 
+    jump crossword_imba
+
     #play sound flashback_start 
     #play music flashback fadein 1.0
     #scene flashback_room with dissolve
@@ -836,7 +838,7 @@ label dmitriev_secret:
 
         "Да!":
 
-            jump hooray:
+            jump hooray
 
         "Нет...":
 
@@ -1230,6 +1232,12 @@ label kitchen_sequence:
         "Ущипнуть себя еще раз":
 
             $ is_dream = True
+
+
+
+label crossword_imba:
+
+    call screen final_crossword
 
 
 

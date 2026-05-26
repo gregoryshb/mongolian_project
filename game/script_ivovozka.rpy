@@ -1,151 +1,201 @@
-#Персонажи наши
-
-define kostya = Character('Костя', image = 'kostya', color="#c8ffc8")
-
-image kostyabase = 'kostyabase.png'
-
-define neighbor = Character('Сосед', image = 'neighbor', color= '#235fe4')
-
-image neighborbase = 'neighborbase.png'
-
-define dmitriev = Character('Дмитриев', kind = bubble, image = 'dmitriev', color = '#abc342')
-
-image dmitrievbase = 'dmitrievbase.png'
-
-define rat1 = Character("Крыса побольше", kind = bubble, image = 'rat', color = '#706d65')
-
-#define rat2 = Character('Крыса поменьше', kind = bubble, color = '#706d65')
-
-define name = Character("[name]", image = 'None', color = '#ac1234') 
-
-define busstranger = Character('???', image = 'busstranger', color='#235fe4')
-
-image hp_high = "hp_high.png"
-image hp_medium = "hp_medium.png"
-image hp_low = "hp_low.png"
+define kostya = Character('Костя', image = 'kostya', color="#c8ffc8", slow_cps = 20)
+define neighbor = Character('Игнат', image = 'neighbor', color= '#235fe4', slow_cps = 20)
+define player = Character("[name]", image = 'None', color = '#ac1234', slow_cps = 20) 
+define busstranger = Character('???', image = 'bus_stranger', color='#235fe4')
 
 
 
-default player_hp = 3
-default rat_attack = 1
+screen number_controls():
+
+    key "K_1" action Jump("lose")
+    key "K_2" action Jump("lose")
+    key "K_3" action Jump("lose")
+    key "K_4" action Jump("tupik")
+
+
+screen number_controls_tupik():
+
+    key "K_1" action Jump("yama")
+    key "K_2" action Jump("lose")
+    key "K_3" action Jump("lose")
+    key "K_4" action Jump("lose")
 
 
 
-screen hp_screen():
+screen number_controls_yama():
 
-    frame:
-        xalign 0.02
-        yalign 0.02
-        padding (15, 15)
+    key "K_1" action Jump("lose")
+    key "K_2" action Jump("win")
+    key "K_3" action Jump("lose")
+    key "K_4" action Jump("lose")
 
-        vbox:
-            spacing 10
-
-            text "HP: [player_hp]" size 40 color "#ffffff"
-
-            if player_hp == 3:
-                add "hp_high"
-
-            elif player_hp == 2:
-                add "hp_medium"
-
-            else:
-                add "hp_low"
-
-
+#Начало игры:
 label start:
 
-    "Игра началась."
+    
+    python:
+        name = renpy.input("Введите ваше имя", "", length = 20)
+        name = name.strip()
 
-label rats_game:
+        if not name:
+            name = "Студент"
 
-    scene black
+        if name == 'vantral':
+            renpy.jump("start")
+            
 
-    $ player_hp = 3
-    $ rat_attack = 1
+    scene bg room
 
-    show screen hp_screen
+    play music snitch volume 0.75
 
-    "На тебя нападают крысы!"
+    name "Ах, первый день в общаге!"
 
-    jump rat_round
+    name "Поступая сюда, я понимал, что не смогу жить в квартире как мои богатые друзья"
+
+    name 'И вот, я здесь, студенческий городок "Ивушки"'
+
+    name 'Это будет долго...'
+
+    show neighborbase
+
+    neighbor 'Привет-привет!'
+
+jump ivovozka
 
 
+label ivovozka:
 
-label rat_round:
+name "Отлично, а теперь в университет"
 
-    if rat_attack > 3:
-        jump rats_win
+name "По коням! Точнее по ивовозкам!"
 
-    if player_hp <= 0:
-        jump rats_lose
+name "..Или как там называют автобус из Ивушек.."
 
-    scene black
 
-    show rat
-    with dissolve
-    show rat_attack1
-    with dissolve
-    show rat_attack2
+scene bus
 
-    # Разные тексты перед атакой
-    if rat_attack == 1:
-        "Крысы с шумом выбегают из темноты!"
-    elif rat_attack == 2:
-        "Крысы окружают тебя и злобно пищат!"
-    else:  # rat_attack == 3
-        "Главная крыса готовится к прыжку!"
+name "Пока еду в университет, попробую узнать какие-то новые слова на монгольском"
+name "Так.."
+name "направо – “баруун тийш”"
+name "налево – “зүүнш”"
+name "назад – “буцаан”"
+name "вперед – “урагш”"
+name "Теперь нужно только заучить"
 
-    "Атака крыс #[rat_attack]!"
+show busstranger
 
-    "Чем отбиться?"
+busstranger "Водителю плохо!"
+busstranger "Кто-нибудь, возьмите управление на себя, я врач, я приведу его в чувство"
+busstranger "Эй, ты, парень! Водить умеешь?"
+name "Да."
+busstranger "Ну вот и иди к рулю!! Быстро!!!"
+
+scene rul
+
+
+label ivovozka_game:
+
+    show screen number_controls
+
+    scene directions
 
     menu:
+        "куда едем?"
 
-        "Яйцо":
+        "1. баруун тийш":
+            jump lose
 
-            "Крысам это не понравилось."
+        "2. зүүнш":
+            jump lose
 
-            $ player_hp -= 1
+        "3. буцаан":
+            jump lose
 
-        "Молоко":
-
-            "Крысы стали ещё злее."
-
-            $ player_hp -= 1
-
-        "Сыр":
-
-            "Правильно! Крысы отвлеклись на сыр."
-
-    if player_hp <= 0:
-        jump rats_lose
-
-    $ rat_attack += 1
-
-    jump rat_round
+        "4. урагш":
+            jump tupik
 
 
-label rats_win:
 
-    scene black
+label tupik:
 
-    hide screen hp_screen
+    show screen number_controls_tupik
 
-    "Ты пережил все атаки крыс!"
+    scene tupik
 
-    return
+    menu:
+        "куда едем?"
+
+        "1. буцаан":
+            jump yama
+
+        "2. урагш":
+            jump lose
+
+        "3. баруун тийш":
+            jump lose
+
+        "4. зүүнш":
+            jump lose
 
 
-label rats_lose:
 
-    scene black
+label yama:
 
-    hide screen hp_screen
+    show screen number_controls_yama
 
-    "Крысы тебя победили..."
+    scene yama
 
-    return
+    menu:
+        "куда едем?"
+
+        "1. зүүнш":
+            jump lose
+
+        "2. баруун тийш":
+            jump win
+
+        "3. урагш":
+            jump lose
+
+        "4. буцаан":
+            jump lose
 
 
-return
+
+label win:
+    hide screen number_controls
+    hide screen number_controls_tupik
+    hide screen number_controls_yama
+
+    scene resultpie
+
+    "ура молодец возьми из бардачка пирожок."
+
+    jump ivovozka_end
+
+
+
+label lose:
+    hide screen number_controls
+    hide screen number_controls_tupik
+    hide screen number_controls_yama
+
+    scene resultdeath
+
+    "але куда неправильно! все умерли."
+
+    pause 1.5
+
+    jump ivovozka_game
+
+
+label ivovozka_end:
+
+scene bus
+
+name "Фух, доехали"
+name "Врач, как там водитель?"
+show busstranger
+busstranger "Нормально. Точнее не очень, но жить будет."
+name "Ну ладно, мне пора в вуз, вы уж дальше сами!"
+

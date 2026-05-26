@@ -20,11 +20,11 @@ image neighbor_phone = 'neighbor_phone.png'
 image neighbor_smart = 'neighbor_smart.png'
 image neighbor_glasses = 'neighbor_glasses.png'
 
-define dmitriev = Character('ИИИ', kind = bubble, image = 'dmitriev', color = '#abc342', slow_cps = 20)
-define dmitriev_secret = Character('???', kind = bubble, image = 'dmitriev', color = '#abc342', slow_cps = 20)
-define dmitriev_full = Character('Иванов Иван Иванович', kind = bubble, image = 'dmitriev', color = '#abc342', slow_cps = 20)
-define dmitriev_surname = Character('Иван Иванович', kind = bubble, image = 'dmitriev', color = '#abc342', slow_cps = 20)
-define dmitriev_short = Character('ИИ', kind = bubble, image = 'dmitriev', color = '#abc342', slow_cps = 20)
+define dmitriev = Character('ИИИ', image = 'dmitriev', color = '#abc342', slow_cps = 20)
+define dmitriev_secret = Character('???', image = 'dmitriev', color = '#abc342', slow_cps = 20)
+define dmitriev_full = Character('Иванов Иван Иванович', image = 'dmitriev', color = '#abc342', slow_cps = 20)
+define dmitriev_surname = Character('Иван Иванович', image = 'dmitriev', color = '#abc342', slow_cps = 20)
+define dmitriev_short = Character('ИИ', image = 'dmitriev', color = '#abc342', slow_cps = 20)
 
 image dmitriev_base = 'dmitriev_base.png'
 
@@ -67,8 +67,13 @@ default kostya_ivushki = False
 
 default is_dream = False
 
+default show_overlay_now = False
+
 #Начало игры:
 label start:
+
+    #init python:
+        #config.overlay_screens.append("notebook_1")
 
     show screen notebook
     jump choose_name
@@ -102,7 +107,8 @@ label beginning:
     
     name "И вот сюда мне довелось попасть в первый год учебы…"
 
-    jump crossword_imba
+    #jump crossword_imba
+    jump look_around
 
     #play sound flashback_start 
     #play music flashback fadein 1.0
@@ -330,16 +336,7 @@ label board:
 
         name "Думаю, мне это пригодится"
 
-        name "Надо бы записать все себе в блокнот, чтобы точно не забыть"
-
-        $ notebook_is = True
-
-        $ notebook_dictionary = 'молоко - milk'
-
-        $ notebook_open = True  
-
-        if not renpy.get_screen("notebook"):
-            show screen notebook
+        name "Надо бы записать все себе в блокнот, чтобы точно не забыть" 
 
         jump look_around
 
@@ -349,6 +346,11 @@ label board:
 
         name "Пора бы познакомиться с другими жильцами..."
 
+        name 'Надо бы не забыть взять блокнот'
+
+        $ show_overlay_now = True
+        show screen notebook_1
+
         if neighbor_approval <= -1:
 
             name "Может быть, они более адекватные, чем этот чудик!"
@@ -357,14 +359,11 @@ label board:
 
             name "Надеюсь, я и с ними полажу"
 
-            jump hallway
+        jump hallway
 
 label hallway:
-   
-    if not renpy.get_screen("notebook"):
-        show screen notebook
     
-    call screen hallway
+    show screen hallway
 
     play music mystery loop
 
@@ -530,6 +529,9 @@ label hallway_2:
 
     kostya "Стой-стой-стой! Я кое о чем вспомнил!"
 
+    hide kostya_mystery
+    show kostya_base
+
     kostya "Игнат недавно одолжил у меня молоко."
 
     kostya "Обещал отдать сегодня, но я от него получил только записку."
@@ -544,6 +546,9 @@ label hallway_2:
 
             $ kostya_approval += 1
 
+            hide kostya_base
+            show kostya_mystery
+
             kostya "Это такая вещь, которую хотят все первокурсники с твоей программы: [[КОНСПЕКТ ПО ДИСКРЕ]]"
 
             name "Договорились!"
@@ -556,32 +561,33 @@ label hallway_2:
 
             kostya "Это такая вещь, которую хотят все первокурсники с твоей программы: [[КОНСПЕКТ ПО ДИСКРЕ]]"
 
+            hide kostya_base
+            show kostya_mystery
+
             name "Ладно..."
 
             name "(Так уж и быть... Сдался мне этот конспект?)"
 
+    hide kostya_mystery
+    show kostya_smile
     
     kostya 'Отлично, как закончишь - скажи!'
+
+    hide screen hallway
 
     jump back_to_our_room
 
 label back_to_our_room:
 
-    if not renpy.get_screen("notebook"):
-        show screen notebook
-
-    call screen our_room
-
-    
+    show screen our_room_non_int
 
     name 'Я что-то говорю потому что в сценарии пока что нету текста'
+
+    hide screen our_room_non_int
 
     jump hallway_3
 
 label hallway_3:
-
-    if not renpy.get_screen("notebook"):
-        show screen notebook
 
     show screen hallway
     show kostya_mystery
@@ -620,6 +626,8 @@ label hallway_3:
 
         kostya 'Обращайся, друг!'
 
+    hide screen hallway
+
 label evening_1:
 
     show screen our_room_non_int
@@ -636,12 +644,11 @@ label evening_1:
 
     $ renpy.pause(10.0, hard=True)
 
-    scene blackbg
+    hide screen our_room_non_int
+    show screen blackbg
     play sound night_skip fadein 1.0
 
     "День второй."
-
-
 
 label morning_2:
 
@@ -699,6 +706,8 @@ label shop_outside:
 
     name 'Ладно, не стоит терять времени'
 
+    hide screen shop_outside
+
     jump shop_inside
 
 label shop_inside:
@@ -709,6 +718,7 @@ label shop_inside:
 
     name "Что там нужно было купить..."
 
+    hide screen shop_inside
     show screen shop_inside_bg
 
     name "..."
@@ -783,19 +793,22 @@ label shop_line:
 
     dmitriev "Меня зовут Иванов Иван Иванович"
 
-    dmitriev "Я вот хотел у Вас спросить, как у представителя {color=red}ПОКОЛЕНИЯ Z...{/color}"
+    dmitriev "Я вот хотел у Вас спросить, как у представителя {color=#d12d21}ПОКОЛЕНИЯ Z...{/color}"
 
     dmitriev "Вот {b}ЧТО{/b} Вы знаете об {i}истории{/i} ??"
 
-    dmitriev "На днях.. Я разговаривал со своими {color=red}внуками{/color}"
+    dmitriev "На днях.. Я разговаривал со своими {color=#d12d21}внуками{/color}"
 
-    dmitriev "И когда я их {b}спросил{/b} про ХРИСТИАНИЗАЦИЮ РУСИ! И про {i}{color=red}стрельцов!{/color}{/i} Они {color=red}НЕ ответили!!{/color}"
+    hide dmitriev_base
+    show dmitriev_rage
+
+    dmitriev "И когда я их {b}спросил{/b} про ХРИСТИАНИЗАЦИЮ РУСИ! И про {i}{color=#d12d21}стрельцов!{/color}{/i} Они {color=#d12d21}НЕ ответили!!{/color}"
 
     name "..."
 
-    dmitriev "ИИИ: А вот {color=red}ДАВАЙТЕ{/color} я у ВАС {b}СПРОШУ{/b}? Я вам {color=red}ВОПРОС, А ВЫ МНЕ — ОТВЕТ!{/color}"
+    dmitriev "ИИИ: А вот {color=#d12d21}ДАВАЙТЕ{/color} я у ВАС {b}СПРОШУ{/b}? Я вам {color=#d12d21}ВОПРОС, А ВЫ МНЕ — ОТВЕТ!{/color}"
 
-    dmitriev "{color=red}{b}ВЫ СОГЛАСНЫ????{/b}{/color}"
+    dmitriev "{color=#d12d21}{b}ВЫ СОГЛАСНЫ????{/b}{/color}"
 
     menu:
 
@@ -803,7 +816,10 @@ label shop_line:
 
             name "Что ж... Давайте"
 
-            dmitriev "{color=red}Отлично!!!!!!{/color}"
+            hide dmitriev_rage
+            show dmitriev_base
+
+            dmitriev "{color=#d12d21}Отлично!!!!!!{/color}"
 
             jump dmitriev_minigame
 
@@ -811,7 +827,10 @@ label shop_line:
 
             name "Наверное, откажусь"
 
-            dmitriev "Неправильный ответ!!!"
+            hide dmitriev_rage
+            show dmitriev_base
+
+            dmitriev "Приму этот ответ за да!"
 
             jump dmitriev_minigame
 
@@ -824,13 +843,13 @@ label dmitriev_minigame:
 
 label dmitriev_secret:
 
-    dmitriev "{color=red}Ого!!!!{/color} да вы прямо {b}МОЛОДЕЦ!{/b} {color=red}{i}Вдумчиво{/i} отвечаете на вопросы!!{/color}"
+    dmitriev "{color=#d12d21}Ого!!!!{/color} да вы прямо {b}МОЛОДЕЦ!{/b} {color=#d12d21}{i}Вдумчиво{/i} отвечаете на вопросы!!{/color}"
 
     name "Спасибо!"
 
-    dmitriev "Теперь у меня больше {i}уверенности{/i} в {color=red}{b}Вашем поколении{/b}{/color}"
+    dmitriev "Теперь у меня больше {i}уверенности{/i} в {color=#d12d21}{b}Вашем поколении{/b}{/color}"
 
-    dmitriev "{color=red}Не ХОТИТЕ ли,{/color} кстати, {color=red}{i}прийти{/i}{/color} ко мне на {b}ОТКРЫТУЮ ЛЕКЦИЮ В БИБЛИОТЕКЕ ИМЕНИ НЕКРАСОВА{/b}"
+    dmitriev "{color=#d12d21}Не ХОТИТЕ ли,{/color} кстати, {color=#d12d21}{i}прийти{/i}{/color} ко мне на {b}ОТКРЫТУЮ ЛЕКЦИЮ В БИБЛИОТЕКЕ ИМЕНИ НЕКРАСОВА{/b}"
 
     dmitriev "Она на тему {b}{i}первородного греха и влияния христианство на Русь.{/b}{/i}"
 
@@ -842,7 +861,7 @@ label dmitriev_secret:
 
         "Нет...":
 
-            dmitriev 'Очень {color=red}жаль!{/color}'
+            dmitriev 'Очень {color=#d12d21}жаль!{/color}'
 
             jump dmitriev_win
 
@@ -850,19 +869,22 @@ label hooray:
     
     name "Хочу! А когда она будет происходить?"
 
-    dmitriev "Она в эту {color=red}пятницу, {i}в 16:30{/i}{/color}"
+    dmitriev "Она в эту {color=#d12d21}пятницу, {i}в 16:30{/i}{/color}"
 
-    dmitriev "А на каком, {b}ЯЗЫКЕ{/b} {color=red}Вы {i}говорили{/i}{/color} только что?"
+    dmitriev "А на каком, {b}ЯЗЫКЕ{/b} {color=#d12d21}Вы {i}говорили{/i}{/color} только что?"
 
     name "На монгольском.. я недавно начал его учить"
 
-    dmitriev '{color=red}О, это правильно!!!!{/color} Хотел бы я {i}вести свои лекции{/i} и там, в МОНГОЛИИ...'
+    dmitriev '{color=#d12d21}О, это правильно!!!!{/color} Хотел бы я {i}вести свои лекции{/i} и там, в МОНГОЛИИ...'
+
+    show screen blackbg fadein 5.0
+    $ renpy.pause(5.0, hard = True)
 
     jump mongolia
 
 label mongolia:
 
-    scene blackbg
+    show screen blackbg fadein 5.0
     play music mongol_song fadein 5.0 
 
     "Пять лет спустя"
@@ -893,17 +915,17 @@ label mongolia:
 
 label dmitriev_win:
 
-    dmitriev "Что ж, я ВАШУ ТОЧКУ ЗРЕНИЯ понял"
+    dmitriev "Что ж, я '{color=#d12d21}{i}ВАШУ{/color}{/i} {b}ТОЧКУ ЗРЕНИЯ{/b} понял"
 
-    dmitriev "Но я вам, конечно, советую прийти на мою лекцию."
+    dmitriev "Но я вам, конечно, {color=#d12d21}{b}советую{/color}{/b} прийти на мою {b}{i}лекцию.{/b}{/i}"
 
     dmitriev "ПОРАССУЖДАЕМ над идеей Достоевского русского - ВСЕЧЕЛОВЕКА"
 
     name "С-спасибо, но нет"
 
-    dmitriev "А вот и моя очередь"
+    dmitriev "А вот и {color=#d12d21}{i}моя очередь{/color}}{/i}"
 
-    dmitriev "Спасибо, молодой человек, за РАЗГОВОР. Я вынужден с вами попрощаться"
+    dmitriev "Спасибо, {b}молодой человек{/b}, за {i}РАЗГОВОР.{/i} Я вынужден с вами попрощаться"
 
     menu:
 
@@ -1237,7 +1259,31 @@ label kitchen_sequence:
 
 label crossword_imba:
 
+    python:
+        wordlist = [
+            ["ПРИВЕТ", "Приветствие"],
+            ["МИР", "Планета Земля"],
+            ["КОТ", "Домашнее животное, мяукает"],
+            ["СОБАКА", "Друг человека"],
+            ["СОЛНЦЕ", "Светит днем"],
+            ["ЛУНА", "Светит ночью"],
+            ["ПРОГРАММА", "Код для компьютера"],
+            ["ПИТОН", "Язык программирования (змея)"],
+            ["РЕНПИ", "Движок для визуальных новелл"],
+            ["ИГРА", "Развлечение"]
+        ]
+        
+        crossword_game = Crossword_shape(rows=12, cols=12)
+        crossword_game.generate_new(wordlist, time_permitted=3.0)
+
     call screen final_crossword
+
+    while True:
+        call screen final_crossword
+        
+        if _return == "new":
+            python:
+                crossword_game.generate_new(wordlist, time_permitted=3.0)
 
 
 

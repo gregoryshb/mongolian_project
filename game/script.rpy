@@ -5,7 +5,7 @@ define kostya_mystery = Character('???', image = 'kostya', color = '#c8ffc8', sl
 
 image kostya_base = 'kostya_base.png'
 image kostya_mystery = 'kostya_mystery.png'
-image kostya_happy = 'kostya_happy.png'
+image kostya_smile = 'kostya_happy.png'
 image kostya_think = 'kostya_think.png'
 
 define neighbor = Character('Игнат', image = 'neighbor', color= '#235fe4', slow_cps = 20)
@@ -27,6 +27,7 @@ define dmitriev_surname = Character('Иван Иванович', image = 'dmitri
 define dmitriev_short = Character('ИИ', image = 'dmitriev', color = '#abc342', slow_cps = 20)
 
 image dmitriev_base = 'dmitriev_base.png'
+image dmitriev_rage = 'dmitriev_rage.png'
 
 define rat_1 = Character("Крыса побольше", kind = bubble, image = 'bubble.png', color = '#706d65', slow_cps = 20)
 
@@ -58,8 +59,6 @@ image bus_stranger = "bus_stranger.png"
 
 default neighbor_approval = 0
 default kostya_approval = 0
-default kostya_asked = 0
-default kostya_questioned = []
 
 default kostya_ignat = False
 default kostya_kostya = False
@@ -107,8 +106,8 @@ label beginning:
     
     name "И вот сюда мне довелось попасть в первый год учебы…"
 
-    #jump crossword_imba
-    jump look_around
+    jump crossword_imba
+    #jump look_around
 
     #play sound flashback_start 
     #play music flashback fadein 1.0
@@ -363,7 +362,7 @@ label board:
 
 label hallway:
     
-    show screen hallway
+    show screen hallway with Dissolve(1.0)
 
     play music mystery loop
 
@@ -387,8 +386,8 @@ label hallway:
 
     kostya "Ты ведь новенький в комнате Игната, да?"
     
-    hide kostya_happy
-    show kostya_happy
+    hide kostya_base
+    show kostya_smile
 
     kostya "Я тут все и обо всех знаю, так что спрашивай сколько хочешь!"
 
@@ -408,7 +407,7 @@ label kostya_interrogation:
                 
                 $ kostya_ignat = True
 
-                hide kostya_happy
+                hide kostya_smile
                 show kostya_base
 
                 kostya "В этой комнате Игнат уже давно живет один."
@@ -510,8 +509,10 @@ label hallway_2:
     if not renpy.get_screen("notebook"):
         show screen notebook
 
-    show screen hallway
-    show kostya_happy
+    show screen hallway with Dissolve(1.0)
+    
+    hide kostya_base
+    show kostya_smile
 
     name "Ладно, я наверное пойду обратно к себе в комнату"
 
@@ -521,7 +522,7 @@ label hallway_2:
 
     name 'Пока, приятно было познакомиться!'
 
-    hide kostya_happy
+    hide kostya_smile
 
     $ renpy.pause(5.0, hard=True)
 
@@ -573,23 +574,25 @@ label hallway_2:
     
     kostya 'Отлично, как закончишь - скажи!'
 
-    hide screen hallway
+    hide screen hallway with Dissolve(1.0)
 
     jump back_to_our_room
 
 label back_to_our_room:
 
-    show screen our_room_non_int
+    show screen our_room_non_int with Dissolve(1.0)
 
     name 'Я что-то говорю потому что в сценарии пока что нету текста'
 
-    hide screen our_room_non_int
+    hide screen our_room_non_int with Dissolve(1.0)
 
     jump hallway_3
 
 label hallway_3:
 
-    show screen hallway
+    show screen hallway with Dissolve(1.0)
+
+    hide kostya_smile 
     show kostya_mystery
 
     if kostya_approval >= 1:
@@ -600,6 +603,9 @@ label hallway_3:
 
         name "Вот и твое молоко!"
 
+    hide kostya_mystery
+    show kostya_base
+
     kostya "Ооо! Спасибо большое!"
 
     kostya "Теперь я расскажу тебе о конспекте, слушай внимательно..."
@@ -607,6 +613,9 @@ label hallway_3:
     kostya "На самом деле, у тебя сейчас очень большие шансы его заполучить"
 
     kostya "Потому что находится он у твоего соседа"
+
+    hide kostya_base
+    show kostya_think
 
     kostya "Я не знаю, чей это конспект и как он попал к Игнату"
 
@@ -618,19 +627,30 @@ label hallway_3:
 
         name 'Спасибо...'
 
+        hide kostya_think
+        show kostya_happy
+
         kostya 'Обращайся, если что!'
     
     elif kostya_approval <= 1:
 
         name 'Ого, спасибо большое!'
 
+        hide kostya_think
+        show kostya_happy
+
         kostya 'Обращайся, друг!'
 
-    hide screen hallway
+    hide screen hallway with Dissolve(1.0)
+    hide kostya_happy
+    hide kostya_smile
+    hide kostya_base
+    hide kostya_mystery
+    hide kostya_think
 
 label evening_1:
 
-    show screen our_room_non_int
+    show screen our_room_non_int with Dissolve(1.0)
 
     name "Ну и день..."
 
@@ -642,17 +662,22 @@ label evening_1:
 
     name "Ну ладно, завтра мне на адаптационку, стоит хорошенько выспаться"
 
-    $ renpy.pause(10.0, hard=True)
+    window hide
 
-    hide screen our_room_non_int
-    show screen blackbg
+    hide screen our_room_non_int with Dissolve(1.0)
+
+    $ renpy.pause(10.0, hard=True)
+    
+    show screen blackbg with Dissolve(1.0)
     play sound night_skip fadein 1.0
+
+    window show
 
     "День второй."
 
 label morning_2:
 
-    show screen our_room_non_int
+    show screen our_room_non_int with Dissolve(1.0)
     stop night_skip fadeout 1.0
 
     name "Вот блин, я проспал адаптационку!"
@@ -689,12 +714,13 @@ label morning_2:
 
             name "Все-таки Костя сказал, что Игнат - неплохой парень"
 
-    scene blackbg
+    show screen blackbg with Dissolve(1.0)
+    hide screen our_room_non_int with Dissolve(1.0)
     jump shop_outside
 
 label shop_outside:
 
-    show screen shop_outside
+    show screen shop_outside with Dissolve(1.0)
 
     name "Первый раз иду в эту Пятерочку"
 
@@ -706,20 +732,20 @@ label shop_outside:
 
     name 'Ладно, не стоит терять времени'
 
-    hide screen shop_outside
-
+    hide screen shop_outside with Dissolve(1.0)
+ 
     jump shop_inside
 
 label shop_inside:
 
-    show screen shop_inside
+    show screen shop_inside with Dissolve(1.0)
 
     name "Так-так-так"
 
     name "Что там нужно было купить..."
 
-    hide screen shop_inside
-    show screen shop_inside_bg
+    hide screen shop_inside with Dissolve(1.0)
+    show screen shop_inside_bg with Dissolve(1.0)
 
     name "..."
 
@@ -758,6 +784,9 @@ label shop_inside:
     name "Пора все это купить"
 
 label shop_line:
+
+    hide screen shop_inside_bg with Dissolve(1.0)
+    show screen shop_inside with Dissolve(1.0)
 
     #show screen line_dmitriev
 
@@ -830,7 +859,7 @@ label shop_line:
             hide dmitriev_rage
             show dmitriev_base
 
-            dmitriev "Приму этот ответ за да!"
+            dmitriev "Я думаю, вам в любом случае понравится"
 
             jump dmitriev_minigame
 
@@ -877,15 +906,19 @@ label hooray:
 
     dmitriev '{color=#d12d21}О, это правильно!!!!{/color} Хотел бы я {i}вести свои лекции{/i} и там, в МОНГОЛИИ...'
 
-    show screen blackbg fadein 5.0
+    hide screen shop_inside with Dissolve(1.0)
+    show screen blackbg with Dissolve(1.0)
+    window hide
     $ renpy.pause(5.0, hard = True)
 
     jump mongolia
 
 label mongolia:
 
-    show screen blackbg fadein 5.0
+    show screen mongolia with Dissolve(1.0)
     play music mongol_song fadein 5.0 
+
+    window show
 
     "Пять лет спустя"
 
@@ -899,11 +932,12 @@ label mongolia:
 
     name "Правда немного жаль, что мы так и не подружились с Игнатом..."
 
+    name 'Хороший был парень, как ни крути'
+
     name "Но это сейчас не важно, мне нужно идти, дело праведное не ждёт."
 
-    $ renpy.pause(20.0, hard = True)
-
     window hide
+    $ renpy.pause(20.0, hard = True)
 
     pause 20.0
 
@@ -1207,7 +1241,7 @@ label ivovozka_end:
 
 label kitchen_sequence:
 
-    scene our_room_non_int
+    show screen our_room_non_int
 
     name "В тот день я так устал. что по приезде сразу лег спать"
 
@@ -1215,7 +1249,7 @@ label kitchen_sequence:
 
     name "Только вот со мной произошло кое-что странное..."
 
-    scene kitchen_flashback
+    show screen kitchen_flashback
 
     if neighbor_approval <= -3:
         
@@ -1232,7 +1266,7 @@ label kitchen_sequence:
     name "Эх, ну приятного аппетита мне"
 
     play sound loud_screech
-    scene kitchen_open_door
+    show screen kitchen_open_door
 
     name "???"
 
@@ -1259,31 +1293,28 @@ label kitchen_sequence:
 
 label crossword_imba:
 
+
     python:
         wordlist = [
             ["ПРИВЕТ", "Приветствие"],
-            ["МИР", "Планета Земля"],
-            ["КОТ", "Домашнее животное, мяукает"],
-            ["СОБАКА", "Друг человека"],
-            ["СОЛНЦЕ", "Светит днем"],
-            ["ЛУНА", "Светит ночью"],
-            ["ПРОГРАММА", "Код для компьютера"],
-            ["ПИТОН", "Язык программирования (змея)"],
-            ["РЕНПИ", "Движок для визуальных новелл"],
-            ["ИГРА", "Развлечение"]
+            ["ТОРТ", "Планета Земля"],
+            ["КОТ", "Домашнее животное, мяукает"]
         ]
         
+        global crossword_game
+
         crossword_game = Crossword_shape(rows=12, cols=12)
-        crossword_game.generate_new(wordlist, time_permitted=3.0)
+        crossword_game.create_new(wordlist, time_permitted=5.0)
+    
 
     call screen final_crossword
 
-    while True:
-        call screen final_crossword
+    #while True:
+        #call screen final_crossword
         
-        if _return == "new":
-            python:
-                crossword_game.generate_new(wordlist, time_permitted=3.0)
+        #if _return == "new":
+            #python:
+                #crossword_game.create_new(wordlist, time_permitted=5.0)
 
 
 

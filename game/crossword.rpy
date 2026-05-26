@@ -1,4 +1,4 @@
-python:
+init python:
 
     import random
     import time
@@ -22,9 +22,9 @@ python:
             self.let_coords.clear()
             self.grid = [[self.empty]*self.cols for i in range(self.rows)]
             if self.available_words:
-                self.first_word(self.available_words[0][0])
+                self.first_word(self.available_words[0])
 
-        def compute_crossword(self, time_permitted = 1.0):
+        def compute_crossword(self, time_permitted = 5.0):
 
             self.best_wordlist = []
             wordlist_length = len(self.available_words)
@@ -33,16 +33,16 @@ python:
 
             while (float(time.time()) - start_full) < time_permitted:
 
-                self.prep_grid_words()
-                for word in self.available_words():
+                self.grid_words()
+                for word in self.available_words:
                     
                     if word[0] not in [w[0] for w in self.current_wordlist]:
                         
-                        self.add_words(word)
+                        self.add_everything(word)
 
                 if len(self.current_wordlist) > len(self.best_wordlist):
 
-                    best_wordlist = list(self.current_wordlist)
+                    self.best_wordlist = list(self.current_wordlist)
                     self.best_grid = [row[:] for row in self.grid]
 
                 if len(self.best_wordlist) == wordlist_length:
@@ -62,14 +62,14 @@ python:
                         if vert_c:
                             if col_c - let >= 0 and (col_c - let) + word_length <= self.cols:
                                 row, col = row_c, col_c - let
-                                score = self.check_score_hor(word, row, col, word_length)
+                                score = self.check_hor(word, row, col, word_length)
 
                                 if score:
                                     coords.append([row, col, 0, score])
                         else:
                             if row_c - let >= 0 and (row_c - let) + word_length <= self.rows:
-                                row, col = row - let, col
-                                score = self.check_score_vert(word, row, col, word_length)
+                                row, col = row_c - let, col_c
+                                score = self.check_vert(word, row, col, word_length)
 
                                 if score:
                                     coords.append([row, col, 1, score])
@@ -84,15 +84,16 @@ python:
             v = random.choice([True, False])
 
             if v:
-                row = random.randrange(0, self.rows - len(word))
+                row = random.randrange(0, self.rows - len(word[0]))
                 col = random.randrange(0, self.cols)
 
             else:
                 row = random.randrange(0, self.rows)
-                col = random.randrange(0, self.cols - len(word))
+                col = random.randrange(0, self.cols - len(word[0]))
 
-            word_obj = [word, None]
-            self.set_word(word_obj, row, col, vert)
+            # word_obj = [word, None]
+            self.place_word(word, row, col, v)
+            #self.set_word(word_obj, row, col, v)
 
         def add_everything(self, word):
 
@@ -101,7 +102,7 @@ python:
                 return False
 
             row, col, vert, score = coords
-            self.set_word(word, row, col, vert)
+            self.place_word(word, row, col, vert)
             return True
 
         def check_hor(self, word, row, col, word_length, score = 1):
@@ -114,11 +115,36 @@ python:
                 current_col = col + i
                 active_cell = self.grid[row][current_col]
 
-                if active_cell == self_empty:
+                if active_cell == self.empty:
                     if row + 1 < self.rows and self.cell_occupied(row + 1, current_col):
                         return 0
 
-                elif active_cell == letter:
+                elif active_cell == l:
+                    score += 1
+
+                else:
+                    return 0
+
+            return score
+
+        def check_vert(self, word, row, col, word_length, score=1):
+            word_text = word[0]
+
+            if row > 0 and self.cell_occupied(row - 1, col):
+                return 0
+
+            for i, l in enumerate(word_text):
+                current_row = row + i
+                active_cell = self.grid[current_row][col]
+
+                if active_cell == self.empty:
+                    if col + 1 < self.cols and self.cell_occupied(current_row, col + 1):
+                        return 0
+                
+                    if col - 1 >= 0 and self.cell_occupied(current_row, col - 1):
+                        return 0
+
+                elif active_cell == l:
                     score += 1
 
                 else:
@@ -128,10 +154,10 @@ python:
 
         def place_word(self, word, row, col, vert):
             word_text = word[0]
-            word[2] = row
-            word[3] = col
-            word[4] = vert
-            self.current_wordlist.append(word)
+            # word.append(row)  # Добавляем координаты в список слова
+            # word.append(col)
+            # word.append(vert)
+            self.current_wordlist.append([word[0], word[1], row, col, vert])
 
             for i, let in enumerate(word_text):
                 if vert:
@@ -144,6 +170,13 @@ python:
                 self.grid[fin_row][fin_col] = let
 
                 self.let_coords[let].append((fin_row, fin_col, not vert))
+        
+        def cell_occupied(self, row, col):
+            
+            if 0 <= row < self.rows and 0 <= col < self.cols:
+                return self.grid[row][col] != self.empty
+            
+            return False
 
     
 
@@ -165,26 +198,28 @@ python:
 
         def find_first_letter(self):
 
-            if not self.correct_grid: return
-            found = False
+            if not self.correct_grid: 
+                return
+            #found False
 
             for i in range(self.rows):
                 for q in range(self.cols):
                     if self.correct_grid[i][q] != ' ':
                         self.selected_row = i
                         self.selected_col = q
-                        found = True
-                        break
+                        return
+                        #found = True
+                        #break
                 
-                if found:
-                    break
+                #if found:
+                    #break
 
-        def create_new(self, wordlist, time_permitted = 2.0):
+        def create_new(self, wordlist, time_permitted = 5.0):
 
-            self.gen = Crossword_shape(self.rows, self.cols, '', wordlist)
+            self.gen = Crossword_words(self.rows, self.cols, ' ', wordlist)
             self.correct_grid, self.words = self.gen.compute_crossword(time_permitted)
-
-            self.player_grid = [['' if cell != '' else None for cell in row for row in self.correct_grid]]
+            self.player_grid = [['' if cell != '' else None for cell in row] for row in self.correct_grid]
+            self.find_first_letter()
 
         def moves(self, d_row, d_col):
 
@@ -217,7 +252,7 @@ python:
 
         def input_letter(self, let):
 
-            if self.set_letter(self.selected_row, self.selected_col, let):
+            if self.place_letter(self.selected_row, self.selected_col, let):
                 if self.direction == 0:
                     self.moves(0, 1)
                 else:
@@ -226,7 +261,7 @@ python:
             
             return False
 
-        def direction(self):
+        def change_direction(self):
 
             self.direction = 1 - self.direction
 
@@ -250,12 +285,13 @@ python:
 
             for data in self.words:
                 if data[0] == text:
-                    row, col, vertical = word[2], word[3], word[4]
-                    for i, let in enumerate(text):
-                        r = row + (i if vert else 0)
-                        c = col + (i if not vert else 0)
-                        if self.player_grid[r][c] != let:
-                            return False
+                    if len(data) > 5:
+                        row, col, vert = data[2], data[3], data[4]
+                        for i, let in enumerate(text):
+                            r = row + (i if vert else 0)
+                            c = col + (i if not vert else 0)
+                            if self.player_grid[r][c] != let:
+                                return False
                     
                     return True
                 
@@ -280,9 +316,9 @@ python:
                     
             return None, '', ''
 
-        def is_in_active_word(self): #а это должно подсвечивать какие клеточки относятся к тому-то слову
+        def is_in_active_word(self, row, col): #а это должно подсвечивать какие клеточки относятся к тому-то слову
             
-            idx, text, clue = self.active_word_info
+            idx, text, clue = self.active_word_info()
             if not idx:
                 return False
 
@@ -295,6 +331,7 @@ python:
             
             else:
                 return row == w_row and w_col <= col <= w_row + length
+
 
 
             

@@ -95,6 +95,49 @@ screen notebook:
 
                 at slide_out
 
+screen notebook_1:
+
+    zorder 1000
+
+    layer 'overlay'
+    
+    imagemap:
+
+        ground 'notebook_1.png'
+        
+        textbutton "Назад" action Show('notebook_3')
+        textbutton "Вперед" action Show('notebook_2')
+
+screen notebook_2:
+
+    layer 'overlay'
+
+    imagemap:
+
+        ground 'notebook_2.png'
+        
+        textbutton "Назад" action Show('notebook_1')
+        textbutton "Вперед" action Show('notebook_2')
+
+screen notebook_3:
+
+    layer 'overlay'
+
+    imagemap:
+
+        ground 'notebook_3.png'
+        
+        textbutton "Назад" action Show('notebook_2')
+        textbutton "Вперед" action Show('notebook_1')
+
+screen blackbg:
+
+    add 'blackbg.png'
+
+screen mongolia:
+
+    add 'mongolia_scenery.png'
+
 screen hallway:
 
     add "hallway.png"
@@ -136,15 +179,12 @@ screen number_controls():
     key "K_3" action Jump("lose")
     key "K_4" action Jump("tupik")
 
-
 screen number_controls_tupik():
 
     key "K_1" action Jump("yama")
     key "K_2" action Jump("lose")
     key "K_3" action Jump("lose")
     key "K_4" action Jump("lose")
-
-
 
 screen number_controls_yama():
 
@@ -155,21 +195,21 @@ screen number_controls_yama():
 
 screen final_crossword():
 
-    default game = store.crossword_game
+    default game = crossword_game
 
     key "K_UP" action Function(game.moves, -1, 0) 
     key "K_DOWN" action Function(game.moves, 1, 0) 
     key "K_RIGHT" action Function(game.moves, 0, -1) 
     key "K_LEFT" action Function(game.moves, 0, 1) 
-    key "K_LSHIFT" action Function(game.direction)
+    key "K_LSHIFT" action Function(game.change_direction)
 
     for i in 'АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЧЦШЩЪЫЬЭЮЯ':
-        key i action Function(game.input_letter, let)
+        key i action Function(game.input_letter, i)
     
     key 'K_BACKSPACE' action Function(game.backspace)
 
     frame: 
-        background'#000000'
+        background '#000000'
         xfill True
         yfill True
         padding (20, 20)
@@ -178,18 +218,18 @@ screen final_crossword():
             spacing 20
             xalign 0.5
 
-            text 'ФИНАЛЬНОЕ ИСПЫТАНИЕ' size 48 color '#ffffff' xalign 0,5
+            text 'ФИНАЛЬНОЕ ИСПЫТАНИЕ' size 48 color '#ffffff' xalign 0.5
 
-            $ num_now, word_now, clue_now = game.get_active_word_info()
+            $ num_now, word_now, clue_now = game.active_word_info()
             
             frame:
                 background "#34495e"
-                padding 10
+                padding (10, 10)
                 xfill True
                 if clue_now:
-                    text f"{curr_num}. {curr_clue}" size 20 color "#f1c40f" xalign 0.5
+                    text f"{num_now}. {clue_now}" size 20 color "#f1c40f" xalign 0.5
                 else:
-                    text "Выберите слово для подсказки" size 18 color "#95a5a6" xalign 0.5
+                    text "Выберите слово, чтобы увидеть его определение" size 18 color "#95a5a6" xalign 0.5
             
             hbox:
                 spacing 20
@@ -198,14 +238,14 @@ screen final_crossword():
                 # Сетка
                 frame:
                     background "#34495e"
-                    padding 10
+                    padding (10, 10)
                     
                     grid game.rows game.cols:
                         spacing 2
                         for row in range(game.rows):
                             for col in range(game.cols):
                                 $ cell_val = game.correct_grid[row][col] if game.correct_grid else ' '
-                                $ user_val = game.user_grid[row][col] if game.user_grid else ''
+                                $ user_val = game.player_grid[row][col] if game.player_grid else ''
                                 $ is_selected = (row == game.selected_row and col == game.selected_col)
                                 $ is_active_word = game.is_in_active_word(row, col)
                                 $ is_correct = game.check_cell(row, col)
@@ -216,11 +256,7 @@ screen final_crossword():
                                         xsize 35 ysize 35
                                 else:
                                     button:
-                                        # Логика цветов:
-                                        # 1. Выбранная клетка: Красная/Оранжевая
-                                        # 2. Часть активного слова: Светло-желтая
-                                        # 3. Правильная буква: Зеленая
-                                        # 4. Обычная: Белая
+                        
                                         background (
                                             "#e74c3c" if is_selected else
                                             "#f1c40f" if is_active_word else
@@ -229,17 +265,15 @@ screen final_crossword():
                                         )
                                         xsize 35 ysize 35
                                         action [
-                                            Function(game.move_selection, row - game.selected_row, col - game.selected_col),
-                                            # Если кликнули по уже выбранной клетке - меняем направление
-                                            If(is_selected, true=Function(game.toggle_direction))
+                                            Function(game.moves, row - game.selected_row, col - game.selected_col),
+                                            If(is_selected, true=Function(game.change_direction))
                                         ]
                                         
-                                        text user_val size 22 color "#2c3e50" yalign 0.5 xalign 0.5 font "DejaVuSans.ttf"
+                                        text user_val size 22 color "#2c3e50" yalign 0.5 xalign 0.5 font "Pangolin-Regular.ttf"
 
-                # Боковая панель
                 frame:
                     background "#34495e"
-                    padding 15
+                    padding (15, 15)
                     xsize 320
                     vbox:
                         spacing 10
@@ -258,7 +292,7 @@ screen final_crossword():
                                     $ w_clue = w_data[1]
                                     $ is_done = game.check_word(w_text)
                                         
-                                    # Показываем только номер и подсказку. Если разгадано - показываем слово.
+                                  
                                     if is_done:
                                         text f"{i+1}. {w_text} ✓" color "#2ecc71" bold True
                                     else:
@@ -266,40 +300,27 @@ screen final_crossword():
                                         
                         null height 20
                         
-                        # Прогресс
-                        $ percent = game.get_completion_percentage()
-                        bar:
-                            value percent
-                            range 100
-                            xfill True
-                            left_bar "#27ae60"
-                            right_bar "#7f8c8d"
-                        text f"Готовность: {int(percent)}%" size 14 color "#ecf0f1" xalign 0.5
-                        
-                        null height 20
-                        
                         textbutton "Новая игра":
                             text_color "#fff"
                             background "#e74c3c"
                             action Return("new")
 
-#label start:
-    python:
-        wordlist = [
-            ["ПРИВЕТ", "Приветствие"],
-            ["МИР", "Планета Земля"],
-            ["КОТ", "Домашнее животное, мяукает"],
-            ["СОБАКА", "Друг человека"],
-            ["СОЛНЦЕ", "Светит днем"],
-            ["ЛУНА", "Светит ночью"],
-            ["ПРОГРАММА", "Код для компьютера"],
-            ["ПИТОН", "Язык программирования (змея)"],
-            ["РЕНПИ", "Движок для визуальных новелл"],
-            ["ИГРА", "Развлечение"]
-        ]
+    #python:
+        #wordlist = [
+            #["ПРИВЕТ", "Приветствие"],
+            #["МИР", "Планета Земля"],
+            #["КОТ", "Домашнее животное, мяукает"],
+            #["СОБАКА", "Друг человека"],
+            #["СОЛНЦЕ", "Светит днем"],
+            #["ЛУНА", "Светит ночью"],
+            #["ПРОГРАММА", "Код для компьютера"],
+            #["ПИТОН", "Язык программирования (змея)"],
+            #["РЕНПИ", "Движок для визуальных новелл"],
+            #["ИГРА", "Развлечение"]
+        #]
         
-        crossword_game = CrosswordGame(rows=12, cols=12)
-        crossword_game.generate_new(wordlist, time_permitted=3.0)
+        #crossword_game = CrosswordGame(rows=12, cols=12)
+        #crossword_game.generate_new(wordlist, time_permitted=3.0)
 
     #while True:
         #call screen final_crossword
@@ -316,7 +337,6 @@ screen final_crossword():
 
     #return
 
-# Простой экран для сообщений
 screen validation(message, yes_action, no_action=None):
     modal True
     zorder 100

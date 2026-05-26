@@ -130,6 +130,40 @@ screen notebook_3:
         textbutton "Назад" action Show('notebook_2')
         textbutton "Вперед" action Show('notebook_1')
 
+screen notebook_pages():
+
+    zorder 1000
+
+    if notebook_page == 1:
+        imagemap:
+            ground "notebook_1.png"
+
+            textbutton "Назад":
+                action SetVariable("notebook_page", 3)
+
+            textbutton "Вперед":
+                action SetVariable("notebook_page", 2)
+
+    elif notebook_page == 2:
+        imagemap:
+            ground "notebook_2.png"
+
+            textbutton "Назад":
+                action SetVariable("notebook_page", 1)
+
+            textbutton "Вперед":
+                action SetVariable("notebook_page", 3)
+
+    elif notebook_page == 3:
+        imagemap:
+            ground "notebook_3.png"
+
+            textbutton "Назад":
+                action SetVariable("notebook_page", 2)
+
+            textbutton "Вперед":
+                action SetVariable("notebook_page", 1)
+
 screen blackbg:
 
     add 'blackbg.png'

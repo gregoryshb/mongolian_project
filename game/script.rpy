@@ -66,15 +66,13 @@ default kostya_ivushki = False
 
 default is_dream = False
 
-default show_overlay_now = False
+default notebook_page = 1
 
 #Начало игры:
 label start:
 
     #init python:
         #config.overlay_screens.append("notebook_1")
-
-    show screen notebook
     jump choose_name
 
     label choose_name:
@@ -106,8 +104,7 @@ label beginning:
     
     name "И вот сюда мне довелось попасть в первый год учебы…"
 
-    jump crossword_imba
-    #jump look_around
+    jump look_around
 
     #play sound flashback_start 
     #play music flashback fadein 1.0
@@ -348,7 +345,7 @@ label board:
         name 'Надо бы не забыть взять блокнот'
 
         $ show_overlay_now = True
-        show screen notebook_1
+        show screen notebook_pages
 
         if neighbor_approval <= -1:
 

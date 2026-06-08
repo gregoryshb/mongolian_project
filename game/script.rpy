@@ -41,12 +41,12 @@ define player = Character("[name]", image = 'None', color = '#ac1234', slow_cps 
 
 define dad = Character('Папа', image = 'dad', slow_cps = 20)
 
-image dad_base = 'dad_base.png'
+image dad_base = 'dad2.png'
 image dad_happy = 'dad_happy.png'
 
 define mom = Character('Мама', image = 'mom', slow_cps = 20)
 
-image mom_base = 'mom_base.png'
+image mom_base = 'dad1.png'
 image mom_happy = 'mom_happy.png'
 
 define galina = Character('Галина Олеговна', image = 'galina', color = '#eb23a6', slow_cps = 20)
@@ -64,8 +64,6 @@ default kostya_ignat = False
 default kostya_kostya = False
 default kostya_ivushki = False
 
-default is_dream = False
-
 default notebook_page = 1
 
 image hp_high = "hp_high.png"
@@ -75,6 +73,10 @@ image hp_low = "hp_low.png"
 default name_hp = 3
 default rat_attack = 1
 default is_dream = 0
+
+default dmitriev_count = 0
+
+default crossword_game = None
 
 image rat_attack_anim:
     "rat_attack1.png"
@@ -102,11 +104,8 @@ image rat_attack_anim:
     "rat_attack12.png"
     0.1
 
-#Начало игры:
 label start:
 
-    #init python:
-        #config.overlay_screens.append("notebook_1")
     jump choose_name
 
     label choose_name:
@@ -129,7 +128,7 @@ label start:
 
 label beginning:
     
-    #scene blackbg
+    show screen blackbg onlayer master
     #play music snitch volume 0.25 fadein 1.0
 
     name "Ивушки™ - студенческое общежитие, находящееся во власти Университета™"
@@ -138,13 +137,13 @@ label beginning:
     
     name "И вот сюда мне довелось попасть в первый год учебы…"
 
-    jump crossword_imba
+    "Пару месяцев назад..."
 
     #play sound flashback_start 
     #play music flashback fadein 1.0
     #scene flashback_room with dissolve
-    #show dad_base with dissolve
-    #show mom_base with dissolve
+    show dad_base with dissolve
+    show mom_base with dissolve
 
     mom "[name], я понимаю, что ты не хочешь жить с чужими людьми, но пойми, мы в твоем возрасте все прошли через такое"
 
@@ -161,8 +160,10 @@ label beginning:
     #play sound flashback_end
     #play music ambient_1
     #scene blackbg with dissolve
-    #hide dad_base dissolve with dissolve
-    #hide mom_base dissolve with dissolve
+    hide dad_base dissolve with dissolve
+    hide mom_base dissolve with dissolve
+
+    "Сегодня."
 
     name "Я очень надеюсь, что слухи не правдивы."
     
@@ -186,7 +187,7 @@ label first_meet:
 
     #play sound door_open
 
-    #scene room 
+    show screen our_room_non_int with Dissolve(1.0) onlayer master
     #play music ambient_1
 
     name "..."
@@ -379,7 +380,7 @@ label board:
         name 'Надо бы не забыть взять блокнот'
 
         $ show_overlay_now = True
-        show screen notebook_pages
+        show screen notebook_pages_1
 
         if neighbor_approval <= -1:
 
@@ -393,7 +394,7 @@ label board:
 
 label hallway:
     
-    show screen hallway with Dissolve(1.0)
+    #show screen hallway with Dissolve(1.0) onlayer master
 
     play music mystery loop
 
@@ -426,9 +427,13 @@ label hallway:
 
     name "Ну, есть три вещи, о которых я бы хотел узнать"
 
+    #hide screen hallway with Dissolve(1.0)
+
     jump kostya_interrogation
 
 label kostya_interrogation:
+
+    #show screen hallway with Dissolve(1.0) onlayer master
 
     menu kostya_questions:
 
@@ -535,12 +540,13 @@ label kostya_interrogation:
 
             jump hallway_2
 
+
 label hallway_2:
 
     if not renpy.get_screen("notebook"):
         show screen notebook
 
-    show screen hallway with Dissolve(1.0)
+    #show screen hallway with Dissolve(1.0) onlayer master
     
     hide kostya_base
     show kostya_smile
@@ -605,23 +611,27 @@ label hallway_2:
     
     kostya 'Отлично, как закончишь - скажи!'
 
-    hide screen hallway with Dissolve(1.0)
+    #hide screen hallway with Dissolve(1.0)
+    hide screen our_room_non_int with Dissolve(1.0)
 
     jump back_to_our_room
 
 label back_to_our_room:
 
-    show screen our_room_non_int with Dissolve(1.0)
+    show screen our_room_non_int with Dissolve(1.0) onlayer master
 
-    name 'Я что-то говорю потому что в сценарии пока что нету текста'
+    show screen note_mongol
+
+    name 'А, я все понял!'
 
     hide screen our_room_non_int with Dissolve(1.0)
+    hide screen note_mongol with Dissolve (1.0)
 
     jump hallway_3
 
 label hallway_3:
 
-    show screen hallway with Dissolve(1.0)
+    #show screen hallway with Dissolve(1.0) onlayer master
 
     hide kostya_smile 
     show kostya_mystery
@@ -672,7 +682,7 @@ label hallway_3:
 
         kostya 'Обращайся, друг!'
 
-    hide screen hallway with Dissolve(1.0)
+    #hide screen hallway with Dissolve(1.0)
     hide kostya_happy
     hide kostya_smile
     hide kostya_base
@@ -681,7 +691,7 @@ label hallway_3:
 
 label evening_1:
 
-    show screen our_room_non_int with Dissolve(1.0)
+    show screen our_room_non_int with Dissolve(1.0) onlayer master
 
     name "Ну и день..."
 
@@ -699,8 +709,8 @@ label evening_1:
 
     $ renpy.pause(10.0, hard=True)
     
-    show screen blackbg with Dissolve(1.0)
-    play sound night_skip fadein 1.0
+    show screen blackbg with Dissolve(1.0) onlayer master
+    #play sound night_skip fadein 1.0
 
     window show
 
@@ -708,8 +718,8 @@ label evening_1:
 
 label morning_2:
 
-    show screen our_room_non_int with Dissolve(1.0)
-    stop night_skip fadeout 1.0
+    show screen our_room_non_int with Dissolve(1.0) onlayer master
+    #stop night_skip fadeout 1.0
 
     name "Вот блин, я проспал адаптационку!"
 
@@ -745,13 +755,13 @@ label morning_2:
 
             name "Все-таки Костя сказал, что Игнат - неплохой парень"
 
-    show screen blackbg with Dissolve(1.0)
+    show screen blackbg with Dissolve(1.0) onlayer master
     hide screen our_room_non_int with Dissolve(1.0)
     jump shop_outside
 
 label shop_outside:
 
-    show screen shop_outside with Dissolve(1.0)
+    show screen shop_outside with Dissolve(1.0) onlayer master
 
     name "Первый раз иду в эту Пятерочку"
 
@@ -769,14 +779,14 @@ label shop_outside:
 
 label shop_inside:
 
-    show screen shop_inside with Dissolve(1.0)
+    show screen shop_inside with Dissolve(1.0) onlayer master
 
     name "Так-так-так"
 
     name "Что там нужно было купить..."
 
     hide screen shop_inside with Dissolve(1.0)
-    show screen shop_inside_bg with Dissolve(1.0)
+    show screen shop_inside_bg with Dissolve(1.0) onlayer master
 
     name "..."
 
@@ -814,10 +824,14 @@ label shop_inside:
 
     name "Пора все это купить"
 
+    hide screen shop_inside_bg with Dissolve(1.0)
+
+    jump shop_line
+
 label shop_line:
 
     hide screen shop_inside_bg with Dissolve(1.0)
-    show screen shop_inside with Dissolve(1.0)
+    show screen shop_inside with Dissolve(1.0) onlayer master
 
     #show screen line_dmitriev
 
@@ -937,7 +951,6 @@ label dmitriev_minigame:
 
     label minigame_hleb:
 
-
     scene dmitriev_hleb
     show dmitriev_base:
         xpos 50
@@ -984,8 +997,6 @@ label dmitriev_minigame:
 
             jump minigame_iaico 
 
-
-
 if dmitriev_count == 3:
     jump dmitriev_secret
 else:
@@ -1028,7 +1039,7 @@ label hooray:
     dmitriev '{color=#d12d21}О, это правильно!!!!{/color} Хотел бы я {i}вести свои лекции{/i} и там, в МОНГОЛИИ...'
 
     hide screen shop_inside with Dissolve(1.0)
-    show screen blackbg with Dissolve(1.0)
+    show screen blackbg with Dissolve(1.0) onlayer master
     window hide
     $ renpy.pause(5.0, hard = True)
 
@@ -1036,8 +1047,8 @@ label hooray:
 
 label mongolia:
 
-    show screen mongolia with Dissolve(1.0)
-    play music mongol_song fadein 5.0 
+    show screen mongolia with Dissolve(1.0) onlayer master
+    #play music mongol_song fadein 5.0 
 
     window show
 
@@ -1078,7 +1089,7 @@ label dmitriev_win:
 
     name "С-спасибо, но нет"
 
-    dmitriev "А вот и {color=#d12d21}{i}моя очередь{/color}}{/i}"
+    dmitriev "А вот и {color=#d12d21}{i}моя очередь{/color}{/i}"
 
     dmitriev "Спасибо, {b}молодой человек{/b}, за {i}РАЗГОВОР.{/i} Я вынужден с вами попрощаться"
 
@@ -1103,7 +1114,7 @@ label our_turn:
 
     galina "Проходите!"
 
-    scene blackbg fadein 1.5
+    show screen blackbg with Dissolve(1.0) onlayer master
 
     $ renpy.pause(5.0, hard=True)
 
@@ -1111,7 +1122,7 @@ label our_turn:
 
 label neighbor_notes:
 
-    scene our_room_non_int fadein 1.5
+    show screen our_room_non_int with Dissolve(1.0) onlayer master
 
     name "(Последние два дня я никак не мог поговорить с Игнатом по поводу конспекта...)"
 
@@ -1121,7 +1132,7 @@ label neighbor_notes:
 
     show neighbor_surprise
 
-    neighbor "Ну да, коенечно. Что такое?"
+    neighbor "Ну да, конечно. Что такое?"
 
     name '(Блин, как бы аккуратно об этом сказать?..)'
 
@@ -1242,7 +1253,7 @@ label ivovozka:
     
     name "Теперь нужно только заучить"
  
-    show bus_stranger
+    #show bus_stranger
 
     bus_stranger "Водителю плохо!"
     
@@ -1281,7 +1292,7 @@ label tupik:
 
     show screen number_controls_tupik
 
-    scene tupik
+    scene typik
 
     menu:
         "куда едем?"
@@ -1343,7 +1354,6 @@ label lose:
 
     jump ivovozka_game
 
-
 label ivovozka_end:
 
     scene bus
@@ -1352,7 +1362,7 @@ label ivovozka_end:
     
     name "Врач, как там водитель?"
     
-    show bus_stranger
+    #show bus_stranger
     
     bus_stranger "Нормально. Точнее не очень, но жить будет."
     
@@ -1362,7 +1372,7 @@ label ivovozka_end:
 
 label kitchen_sequence:
 
-    show screen our_room_non_int
+    show screen our_room_non_int onlayer master
 
     name "В тот день я так устал. что по приезде сразу лег спать"
 
@@ -1370,7 +1380,7 @@ label kitchen_sequence:
 
     name "Только вот со мной произошло кое-что странное..."
 
-    show screen kitchen_flashback
+    show screen kitchen_flashback onlayer master
 
     if neighbor_approval <= -3:
         
@@ -1386,8 +1396,8 @@ label kitchen_sequence:
 
     name "Эх, ну приятного аппетита мне"
 
-    play sound loud_screech
-    show screen kitchen_open_door
+    #play sound loud_screech
+    #show screen kitchen_open_door
 
     name "???"
 
@@ -1425,8 +1435,8 @@ menu:
 
 if is_dream <= 0:
         rat_1 "Психиатру это скажи, мы тут при чем?"
-        rat_1 "У тебя сыра (монг) не найдется?"
-        name "Монг? Аа, это сыр."
+        rat_1 "У тебя бяслаг не найдется?"
+        name "Бяслаг? Аа, это сыр."
         name "А что..?"
         rat_1 "Ответишь - узнаешь"
         name "Нет, сыра вроде нет"
@@ -1443,14 +1453,14 @@ if is_dream >= 1:
         show rat
 
         name "Ай! Больно же."
-        rat_1 "Отдашь монг и мы уйдем с миром"
-        name "Монг? Аа, это сыр."
+        rat_1 "Отдашь бяслаг и мы уйдем с миром"
+        name "Бяслаг? Аа, это сыр."
         name "А у меня нет сыра.."
 
 
 
 rat_1 "А если найдем? Кхехехе"
-rat_2 "Найдем. У него есть монг." 
+rat_2 "Найдем. У него есть бяслаг." 
 name "Он соседский, я не могу его вам дать!"
 rat_2 "Врать плохо."
 rat_1 "Лгунишек мы не прощаем. В атаку!!!"
@@ -1486,7 +1496,7 @@ label rat_round:
     show rat
 
     if rat_attack == 1:
-        rat_1 "Вот как так получилось, что люди кормят других адгуус (животные), а нас - нет!!"
+        rat_1 "Вот как так получилось, что люди кормят других адгуус, а нас - нет!!"
         rat_1 "Мы, харх, честный народ."
         rat_2 "И тоже заслуживаем уважения."
     elif rat_attack == 2:
@@ -1498,7 +1508,7 @@ label rat_round:
         rat_2 "Это правда."
     else: 
         rat_1 "А эта.. нохой, она что? Лает постоянно и всё!"
-        rat_1 "И всех их человек кормит, а харх (крысы) остаются голодными."
+        rat_1 "И всех их человек кормит, а харх остаются голодными."
         rat_2 "Мы вдвоем всю жизнь перебиваемся остатками пищи, но так и не пробовали сыра."
         rat_1 "Заткнисссььь!!!!"
 
@@ -1508,19 +1518,19 @@ label rat_round:
 
     menu:
 
-        "Яйцо":
+        "Өндөг":
 
             "Крысам это не понравилось."
 
             $ name_hp -= 1
 
-        "Молоко":
+        "Сүү":
 
             "Крысы стали ещё злее."
 
             $ name_hp -= 1
 
-        "Сыр":
+        "Бяслаг":
 
             "Правильно! Крысы отвлеклись на сыр."
 
@@ -1618,10 +1628,11 @@ label crossword_game:
     neighbor "Определения будут на русском, а слова, естественно, на монгольском. Всё, что тебе нужно будет сделать - вписать их в слоты. В каждой клеточке по одной букве."
     neighbor "Итак, начнем."
 
+    window hide
+
 jump crossword_imba
 
 label crossword_imba:
-
 
     python:
         wordlist = [
@@ -1639,77 +1650,105 @@ label crossword_imba:
         
         global crossword_game
 
-        crossword_game = Crossword_shape(rows=12, cols=12)
-        crossword_game.create_new(wordlist, time_permitted=5.0)
+        best_game = Crossword_shape(rows=20, cols=20)
+        best_game.create_new(wordlist, time_permitted=30.0)
+        best_count = len(best_game.words)
+        
+        for attempt in range(100): 
+            temp_game = Crossword_shape(rows=20, cols=20)
+            temp_game.create_new(wordlist, time_permitted=30.0)
+            if len(temp_game.words) > best_count:
+                best_count = len(temp_game.words)
+                best_game = temp_game  
     
-
+        crossword_game = best_game
+    
     call screen final_crossword
-
-    #while True:
-        #call screen final_crossword
+    
+    while True:
+        call screen final_crossword
         
-        #if _return == "new":
-            #python:
-                #crossword_game.create_new(wordlist, time_permitted=5.0)
+        if _return == "new":
+            python:
+                crossword_game.create_new(wordlist, time_permitted=30.0)
 
+    if _return == "complete":
+        jump crossword_good
 
+label crossword_good:
 
-
+    show blackbg
+    show our_room
+    if neighbor_approval == 5:
         
+        show neighbor_joy
+        neighbor "Ого! Ты очень быстро справился!"
+        hide neighbor_joy
+        show neighbor_smile
+        neighbor "Ты готовился и старался для достижения своей цели, помогал разным людям, был готов разделить чужие интересы, хоть и не сразу их понял. Я признаю, что рад тому, что именно ты заселился в эту комнату."
+        neighbour "И, как твой сосед, я вручаю тебе этот конспект."
+        neighbour "Надеюсь, он тебе пригодится."
+        name "Спасибо большое!"
+        name "За конспект.. и в принципе за опыт изучения чего-то, о чем я раньше даже не думал."
+        name "Мне понравилось учить монгольский. И я даже хотел бы продолжить этим заниматься."
+        hide neighbor_smile
+        show neighbor_joy
+        neighbour "Правда?! Хочешь я расскажу тебе двадцать самых интересных фактов об этом языке? И посоветую учебники?"
+        name "Да, почему бы и нет."
+        name "(Ого, я ещё не видел его таким оживленным)"
+        neighbour "Итак, слушай-"
+        hide neighbor_joy
+        hide our_room
+        show screen our_room_non_int with Dissolve(1.0)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-    
-
-
+    elif 0 < neighbor_approval < 5:
         
-
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    
-
-
-
-
-
-
-    
-
-
-
-
-
-
-               
-
+        show neighbor_joy
+        neighbor "Ого! Ты очень быстро справился!"
+        hide neighbor_joy
+        show neighbor_smile
+        neighbor "Ты готовился и старался для достижения своей цели, помогал разным людям, был готов разделить чужие интересы, хоть и не сразу их понял. Я признаю, что рад тому, что именно ты заселился в эту комнату."
+        neighbor "И, как твой сосед, я вручаю тебе этот конспект."
+        neighbor "Надеюсь, он тебе пригодится."
+        name "Спасибо большое!"
+        name "За конспект.. и в принципе за опыт изучения чего-то, о чем я раньше даже не думал."
+        hide neighbor_smile
+        show neighbor_joy
+        neighbor "Ха-ха, конечно."
+        neighbor "Не хочешь продолжить изучать монгольский? Могу посоветовать пару пособий и помочь с этим."
+        name "Хм.. ну..."
+        hide neighbor_joy
+        hide our_room
+        show screen our_room_non_int with Dissolve(1.0)
+   
+    else:
+        
+        show neighbor_smart
+        neighbor "Итак. По результатам испытания..."
+        neighbor "Вы не прошли."
+        hide neighbor_smart
+        show neighbor_sad
+        neighbor "Извини."
+        neighbor "Но я не могу отдать тебе его."
+        neighbor "Ты выполнил нашу часть уговора, но я понял, насколько мне дорог этот конспект."
+        neighbor "Помимо самого кроссворда тестоом было все твое предыдущее пребывание в ивушках."
+        neighbor "Я наблюдал за тобой некоторое время и понял, что мы не сойдемся."
+        neighbor "Ты не готов принимать интересы других людей и готов негативно относиться к людям только лишь из-за того, что они не влезают в твой кругозор."
+        neighbor "Он связан с важной частью моей жизни и я.. не хочу, чтобы он оказался в руках людей, которые меня не понимают."
+        name "(Да вы издеваетесь..?!)"
+        name "(Мне нужен этот конспект)"
+        name "Но я тебя понимаю!"
+        hide neighbor_sad 
+        show neighbor_phone
+        neighbor "К сожалению, мое решение окончательное."
+        hide neighbor_phone
+        show neighbor_base
+        neighbor "А теперь извини, мне нужно на пары."
+        hide neighbor_base
+        name "(...}"
+        name "(И это все?)"
+        name "(Неужели я правда в чем-то ошибся?)"
+        show screen our_room_non_int with Dissolve(1.0)
 
                 #show screen notebook_button
                 #$ show_notebook_button = True
@@ -1721,12 +1760,6 @@ label crossword_imba:
 
     #show notebook
 
-
-
-            
-
-
-        
         # это первая часть считывания инпута от мышки пользователя
         # оно тип ищет позицию мышки и потом мы должны проверять если она находится в таком то диапазоне
         # то при нажатии у нас открывается такое то меню
@@ -1740,9 +1773,7 @@ label crossword_imba:
             #x, y = pygame.mouse.get_pos()
             #store.mouse_x = x
             #store.mouse_y = y
-                
-        
-     
+                    
     # mouse_pressed = renpy.mouse.get_mouse_button_down_1
     #if mouse_pressed == True and x == 12 and y == 12:
 
@@ -1773,36 +1804,9 @@ label crossword_imba:
             #name "Стоп...
                 
             #Он забыл ноутбук??!"
-            
-        
-        
+                
         #if mouse_pressed == True and x == 24 and y == 24:
 
             #label window:
-
-
-            
-
-
-
-
-
-
-
-    
-
-
-
-        
-
-
-
-
-
-
-
-
-
-
 
     return
